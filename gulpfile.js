@@ -7,7 +7,7 @@ var files = {
 	mainStylesheet : 'stylesheets/main.scss',
     pdfStylesheet : 'stylesheets/pdf.scss',
     stylesheets : 'stylesheets/*.scss'
-}
+};
 
 gulp.task('clean',  function(){
 	return gulp.src('css')
