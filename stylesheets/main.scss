@@ -1,0 +1,74 @@
+@import 'paper-variables.scss';
+@import '../bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss';
+@import 'paper-bootswatch.scss';
+
+
+/*******************************************************************
+
+This chunk is to fix Bootstrap so that the Markdown output looks good
+
+*******************************************************************/
+
+body {
+  padding-top: 0px;
+  padding-bottom: 40px;
+}
+
+xmp, textarea {
+  display: none;
+}
+
+h1,h2,h3,h4 {
+  margin: 15px 0;
+}
+
+pre {
+  margin: 20px 0;
+}
+
+img {
+  margin: 10px 0;
+}
+
+.navbar {
+  z-index: 1;
+}
+
+p {
+//  text-align: justify;
+}
+
+hr {
+    margin:0;
+    padding:0;
+
+    @media (max-width: $screen-sm-min) {
+        margin-top: 15px;
+    }
+}
+
+.name-role {
+    
+    @extend .col-sm-7;
+    @extend .col-xs-12;
+   
+    @media (max-width: $screen-sm-min) {
+        text-align:center;
+        p { text-align: center; }
+    }
+
+}
+
+.contact-details {
+    
+    @extend .col-sm-5;
+    @extend .col-xs-12;
+  
+    @media (min-width: $screen-sm-min) {
+        text-align: right;
+    }
+    @media (max-width: $screen-sm-min) {
+        text-align:center;
+    }
+
+}
