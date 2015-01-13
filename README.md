@@ -4,6 +4,8 @@ This is my c.v. written as a responsive web page using [bootstrap](http://getboo
 
 An example website can be found at [naeem.khedarun.co.uk]() and sample PDF [here](http://naeem.khedarun.co.uk/naeemkhedarun.pdf).
 
+![An example of the site design](example.png)
+
 The webpage is hosted using [http-server (node)](https://www.npmjs.com/package/http-server) and mapped to a .dev domain using [invoker](http://invoker.codemancers.com/).
 
 Check out the following blog entry for more details about the source: [sharpfellows.com](http://sharpfellows.com/post/publishing-your-c-v-on-the-web-and-exporting-pdf-with-added-gulp-and-bootstrap).
