@@ -6,7 +6,7 @@ An example website can be found at [naeem.khedarun.co.uk]() and sample PDF [here
 
 ![An example of the site design](example.png)
 
-The webpage is hosted using [http-server (node)](https://www.npmjs.com/package/http-server) and mapped to a .dev domain using [invoker](http://invoker.codemancers.com/).
+The webpage is developed locally using [http-server (node)](https://www.npmjs.com/package/http-server) and mapped to a .dev domain using [invoker](http://invoker.codemancers.com/).
 
 Check out the following blog entry for more details about the source: [sharpfellows.com](http://sharpfellows.com/post/publishing-your-c-v-on-the-web-and-exporting-pdf-with-added-gulp-and-bootstrap).
 
@@ -46,6 +46,16 @@ Make sure you have [wkhtmltopdf](http://wkhtmltopdf.org/) installed with at leas
 Then you can run the following to generate both main.css with the pdf override styles and the pdf itself.
 
     gulp pdfsass
+
+## Hosting on Github
+
+Github gives you a [User page](https://help.github.com/articles/user-organization-and-project-pages/) which feels like an appropriate place to put your c.v. and its quite easy to get up and running. Github uses a convention for user pages so create a repository called **username.github.io**. 
+
+If you want a custom domain put into the root of your sites directory a file called **CNAME** and put in the domain name without the protocol. In mine I have:
+
+    naeem.khedarun.co.uk
+
+You can now push your repository up to github and within 30 minutes your page will be available at **http://username.github.io**. If you are using a custom domain add a CNAME record pointing your domain to **username.github.io**.
 
 ## Over to you
 
