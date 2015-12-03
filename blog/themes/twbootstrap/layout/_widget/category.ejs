@@ -1,0 +1,11 @@
+<% if (site.categories.length){ %>
+<h3><%- __('categories') %></h3>
+<ul class="list-group">
+<% site.categories.sort('name').each(function(item){ %>
+  <li class="list-group-item">
+    <span class="badge"><%- item.posts.length %></span>
+    <a href="<%- config.root %><%- item.path %>"><%- item.name %></a>
+  </li>
+<% }); %>
+</ul>
+<% } %>
