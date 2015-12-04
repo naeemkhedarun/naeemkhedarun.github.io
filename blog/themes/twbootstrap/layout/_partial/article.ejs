@@ -1,8 +1,9 @@
 <% if (item.layout != 'page'){ %>
   <div class="page-header">
   <div class="icon"></div>
-  <time datetime="<%= item.date.toDate().toISOString() %>"><a href="<%- config.root %><%- item.path %>"><%= item.date.format(config.date_format) %></a></time>
+  
   <%- partial('post/title') %>
+  <a href="<%- config.root %><%- item.path %>"><%= item.date.fromNow() %></a>
   </div>
 <% } %>
 <p>
