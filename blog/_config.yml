@@ -6,7 +6,7 @@
 title: Naeem Khedarun
 subtitle:
 description:
-author: John Doe
+author: Naeem Khedarun
 language: default
 timezone:
 
@@ -39,9 +39,9 @@ relative_link: false
 future: true
 highlight:
   enable: true
-  line_number: true
-  auto_detect: true
-  tab_replace:
+  line_number: false
+  auto_detect: false
+  tab_replace: true
 
 # Category & Tag
 default_category: uncategorized
