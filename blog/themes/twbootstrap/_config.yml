@@ -98,15 +98,15 @@ tag_minium: 3
 
 excerpt_link: read more
 
-twitter_id: naeemkhedarun
+twitter_id: 
 facebook_id: 
 linkedin_id: 
 github_id: 
 
 addthis:
-  enable: true
+  enable: false
   pubid:
-  twitter: true
+  twitter: false
   facebook: true
 
 google_analytics:
