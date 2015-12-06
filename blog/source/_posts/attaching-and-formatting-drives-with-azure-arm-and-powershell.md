@@ -13,18 +13,18 @@ Setting up a virtual machine in Azure using ARM has been made straightforward, e
 
 To attach a data disk to the virtual machine you can use the following configuration just below the osDisk definition.
 
-```
-"dataDisks":[
-   {
-      "lun":0,
-      "name":"datadisk",
-      "diskSizeGB":1000,
-      "createOption":"Empty",
-      "vhd":{
-         "Uri":"[variables('dataDiskUri')]"
-      }
-   }
-]
+```json
+{
+      "dataDisks":[{
+            "lun":0,
+            "name":"datadisk",
+            "diskSizeGB":1000,
+            "createOption":"Empty",
+            "vhd":{
+                  "Uri":"[variables('dataDiskUri')]"
+            }
+      }]
+}
 ```
 
 * lun (Logical Unit Number) should be unique for each attached disk and starts from zero.
@@ -40,7 +40,7 @@ Get-Disk | Where partitionstyle -eq 'raw'
 
 We need one more resource to complete the deployment and give us a formatted disk. We can use the CustomScriptExtension to run a PowerShell script which will format any raw attached disks (in case you want to do multiple drives).
 
-```
+```json
 {
    "type":"Microsoft.Compute/virtualMachines/extensions",
    "name":"[concat(variables('vmName'),'/InitialiseDisks')]",
