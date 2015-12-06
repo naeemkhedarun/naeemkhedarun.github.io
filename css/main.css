@@ -74,7 +74,8 @@ hr {
   height: 0; }
 
 pre {
-  overflow: auto; }
+  overflow: auto; 
+  white-space: pre-wrap;}
 
 code, kbd, pre, samp {
   font-family: monospace, monospace;
@@ -934,7 +935,7 @@ h4, .h4, h5, .h5, h6, .h6 {
     font-size: 75%; }
 
 h1, .h1 {
-  font-size: 56px; }
+  font-size: 45px; }
 
 h2, .h2 {
   font-size: 45px; }
