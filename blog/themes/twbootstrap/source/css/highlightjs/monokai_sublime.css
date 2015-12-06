@@ -4,13 +4,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
 */
 
-pre code {
+.code pre {
   display: block;
   padding: 0.5em;
   background: #23241f;
 }
 pre .tag,
-pre code {
+.code pre {
   color: #f8f8f2;
 }
 pre .keyword,
