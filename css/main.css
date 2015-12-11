@@ -77,6 +77,10 @@ pre {
   overflow: auto; 
   white-space: pre-wrap;}
 
+.highlight > table {
+  width:100%;
+}
+
 code, kbd, pre, samp {
   font-family: monospace, monospace;
   font-size: 1em; }
@@ -951,6 +955,26 @@ h5, .h5 {
 
 h6, .h6 {
   font-size: 14px; }
+
+@media (max-width: 767px) {
+  h1, .h1 {
+  font-size: 24px; }
+
+  h2, .h2 {
+    font-size: 24px; }
+  
+  h3, .h3 {
+    font-size: 22px; }
+  
+  h4, .h4 {
+    font-size: 14px; }
+  
+  h5, .h5 {
+    font-size: 12px; }
+  
+  h6, .h6 {
+    font-size: 11px; }
+}
 
 p {
   margin: 0 0 11px; }
