@@ -77,3 +77,5 @@ admin:
     secret: hey hexo
     expire: 60*1
     # cors: http://localhost:3000
+
+disqus_shortname: naeemkhedarun
