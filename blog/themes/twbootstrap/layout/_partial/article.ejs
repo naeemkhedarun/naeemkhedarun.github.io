@@ -1,10 +1,6 @@
 <% if (item.layout != 'page'){ %>
-  <div class="page-header">
-  <div class="icon"></div>
-  
   <%- partial('post/title') %>
-  <a href="<%- config.root %><%- item.path %>"><%= item.date.fromNow() %></a>
-  </div>
+  <i><%= item.date.fromNow() %></i>
 <% } %>
 <p>
 <% if (item.excerpt && index){ %>
