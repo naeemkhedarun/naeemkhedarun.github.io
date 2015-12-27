@@ -62,7 +62,6 @@ function drawCharts() {
     var options = JSON.parse(jsonOptions);
     var type = stringToFunction('google.visualization.' + element.getAttribute('type'));
     var chart = new type($(element).find("div")[0]);
-    console.log(getArrayFromTable(table))
     chart.draw(data, options);
     
     $(table).hide()
