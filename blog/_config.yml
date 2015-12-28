@@ -64,6 +64,7 @@ pagination_dir: page
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 theme: twbootstrap
+bootstrap_js: false
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
@@ -79,3 +80,12 @@ admin:
     # cors: http://localhost:3000
 
 disqus_shortname: naeemkhedarun
+
+optimize:
+  image_min: true
+  css_min: true
+  css_concat: true
+  js_concat: true
+  js_min: true
+  html_min: true
+  gzip: true

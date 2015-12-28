@@ -17,7 +17,7 @@
 #bootstrap_css: //netdna.bootstrapcdn.com/bootswatch/3.0.0/slate/bootstrap.min.css
 #bootstrap_css: //netdna.bootstrapcdn.com/bootswatch/3.0.0/spacelab/bootstrap.min.css
 #bootstrap_css: //netdna.bootstrapcdn.com/bootswatch/3.0.0/united/bootstrap.min.css
-bootstrap_css: http://localhost:8080/css/main.css
+bootstrap_css: /css/main.css
 
 # highlight.js is the code highlighter in this theme
 # choose a highlight.js theme here or delete all to disable
@@ -62,9 +62,9 @@ bootstrap_css: http://localhost:8080/css/main.css
 
 # This section turns on javascript components,
 # they're off by default to make things faster.
-#bootstrap_js: true
+bootstrap_js: false
 #imagesloaded_js: true # gives images a loading icon
-#fancybox: true
+fancybox: false
 
 # stick footer to page bottom
 sticky_footer: true
