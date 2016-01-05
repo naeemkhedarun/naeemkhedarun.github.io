@@ -20,7 +20,7 @@ Any exceptions which crash the application can be handled using the `UnhandledEx
 ```csharp
 AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
 {
-	Log.Exception((Exception)args.ExceptionObject);
+    Log.Exception((Exception)args.ExceptionObject);
 };
 ```
 
@@ -31,10 +31,10 @@ You can use the UnobservedTaskException to catch some of those ones:
 ```csharp
 TaskScheduler.UnobservedTaskException += (sender, args) =>
 {
-	if (!args.Observed)
-	{
-		Log.Exception(args.Exception);
-	}
+    if (!args.Observed)
+    {
+        Log.Exception(args.Exception);
+    }
 };
 ```
 
