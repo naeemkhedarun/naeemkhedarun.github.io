@@ -3,9 +3,9 @@
   <title><![CDATA[Naeem Khedarun]]></title>
   
   <link href="/blog/atom.xml" rel="self"/>
-  <link href="http://naeem.khedarun.com/blog/"/>
+  <link href="http://naeem.khedarun.co.uk/blog/"/>
   <updated>2016-01-09T18:33:06.000Z</updated>
-  <id>http://naeem.khedarun.com/blog/</id>
+  <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
     <name><![CDATA[Naeem Khedarun]]></name>
@@ -16,8 +16,8 @@
   
   <entry>
     <title><![CDATA[Logging all unhandled exceptions in .NET]]></title>
-    <link href="http://naeem.khedarun.com/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/"/>
-    <id>http://naeem.khedarun.com/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/</id>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/</id>
     <published>2016-01-05T15:46:54.000Z</published>
     <updated>2016-01-09T18:33:06.000Z</updated>
     <content type="html"><![CDATA[<p>With most applications its easy to get started on logging.</p>
@@ -41,18 +41,18 @@
 <li>Put tr]]>
     </summary>
     
-      <category term=".NET" scheme="http://naeem.khedarun.com/blog/tags/NET/"/>
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
-      <category term="C#" scheme="http://naeem.khedarun.com/blog/tags/C/"/>
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
-      <category term="development" scheme="http://naeem.khedarun.com/blog/categories/development/"/>
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Attaching and formatting drives with Azure ARM and PowerShell]]></title>
-    <link href="http://naeem.khedarun.com/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/"/>
-    <id>http://naeem.khedarun.com/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/</id>
+    <link href="http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/</id>
     <published>2015-12-03T12:02:16.000Z</published>
     <updated>2015-12-06T17:25:04.000Z</updated>
     <content type="html"><![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working. This is based on the <a href="https://github.com/Azure/azure-quickstart-templates/tree/master/windows-vm-custom-script" target="_blank" rel="external">custom script quickstart template</a> and <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2013/05/29/use-powershell-to-initialize-raw-disks-and-partition-and-format-volumes.aspx" target="_blank" rel="external">Ed Wilsons formatting script article</a></p>
@@ -80,11 +80,11 @@
     <![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services ]]>
     </summary>
     
-      <category term="azure" scheme="http://naeem.khedarun.com/blog/tags/azure/"/>
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
-      <category term="powershell" scheme="http://naeem.khedarun.com/blog/tags/powershell/"/>
+      <category term="powershell" scheme="http://naeem.khedarun.co.uk/blog/tags/powershell/"/>
     
-      <category term="operations" scheme="http://naeem.khedarun.com/blog/categories/operations/"/>
+      <category term="operations" scheme="http://naeem.khedarun.co.uk/blog/categories/operations/"/>
     
   </entry>
   
