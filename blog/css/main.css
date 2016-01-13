@@ -1,3 +1,21 @@
+.navbar-center {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.name-brand {
+    font-size: 22px;
+    color: #666;
+}
+
+.navbar-spacer {
+    border-right: 1px solid #999;
+    padding-left:10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-right:10px;
+}
+
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif;
@@ -3037,7 +3055,7 @@ tbody.collapse.in {
 
 .navbar {
   position: relative;
-  min-height: 64px;
+  min-height: 50px;
   margin-bottom: 22px;
   border: 1px solid transparent; }
   .navbar:before, .navbar:after {
@@ -4915,9 +4933,7 @@ button.close {
  }
 
 .navbar {
-  border: none;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+  border: none; }
   .navbar-brand {
     font-size: 24px; }
   .navbar-inverse .form-control {

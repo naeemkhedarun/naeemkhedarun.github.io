@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[Naeem Khedarun]]></title>
+  
+  <link href="/blog/atom.xml" rel="self"/>
+  <link href="http://naeem.khedarun.com/blog/"/>
+  <updated>2016-01-09T18:33:06.000Z</updated>
+  <id>http://naeem.khedarun.com/blog/</id>
+  
+  <author>
+    <name><![CDATA[Naeem Khedarun]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Logging all unhandled exceptions in .NET]]></title>
+    <link href="http://naeem.khedarun.com/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/"/>
+    <id>http://naeem.khedarun.com/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/</id>
+    <published>2016-01-05T15:46:54.000Z</published>
+    <updated>2016-01-09T18:33:06.000Z</updated>
+    <content type="html"><![CDATA[<p>With most applications its easy to get started on logging.</p>
+<ul>
+<li>Install a logging framework like NLog or log4net.</li>
+<li>Put try catches around your main program logic and include contextual information with the exception.</li>
+<li>If its a web application use a logging middleware for your web framework.</li>
+</ul>
+<p>However this will not log unhandled exceptions from places you couldn’t forsee. So let’s log these just in case anything goes wrong.</p>
+<p>Any exceptions which crash the application can be handled using the <code>UnhandledException</code> event.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">AppDomain.CurrentDomain.UnhandledException += (sender, args) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    Log.Exception((Exception)args.ExceptionObject);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>This will help you diagnose fatal errors. Unfortunately not all exceptions are fatal, and if you have any timers, unawaited async or unhandled task pool exceptions these can cause your application to behave unexpectedly without you knowing about it.</p>
+<p>You can use the UnobservedTaskException to catch some of those ones:</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">TaskScheduler.UnobservedTaskException += (sender, args) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!args.Observed)</span><br><span class="line">    &#123;</span><br><span class="line">        Log.Exception(args.Exception);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>If you know any other events or ways to get more of these unexpected errors please let me know!</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>With most applications its easy to get started on logging.</p>
+<ul>
+<li>Install a logging framework like NLog or log4net.</li>
+<li>Put tr]]>
+    </summary>
+    
+      <category term=".NET" scheme="http://naeem.khedarun.com/blog/tags/NET/"/>
+    
+      <category term="C#" scheme="http://naeem.khedarun.com/blog/tags/C/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.com/blog/categories/development/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Attaching and formatting drives with Azure ARM and PowerShell]]></title>
+    <link href="http://naeem.khedarun.com/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/"/>
+    <id>http://naeem.khedarun.com/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/</id>
+    <published>2015-12-03T12:02:16.000Z</published>
+    <updated>2015-12-06T17:25:04.000Z</updated>
+    <content type="html"><![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working. This is based on the <a href="https://github.com/Azure/azure-quickstart-templates/tree/master/windows-vm-custom-script" target="_blank" rel="external">custom script quickstart template</a> and <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2013/05/29/use-powershell-to-initialize-raw-disks-and-partition-and-format-volumes.aspx" target="_blank" rel="external">Ed Wilsons formatting script article</a></p>
+<h3 id="Attach_a_disk">Attach a disk</h3><p>To attach a data disk to the virtual machine you can use the following configuration just below the osDisk definition.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      "<span class="attribute">dataDisks</span>":<span class="value">[&#123;</span><br><span class="line">            "<span class="attribute">lun</span>":<span class="value"><span class="number">0</span></span>,</span><br><span class="line">            "<span class="attribute">name</span>":<span class="value"><span class="string">"datadisk"</span></span>,</span><br><span class="line">            "<span class="attribute">diskSizeGB</span>":<span class="value"><span class="number">1000</span></span>,</span><br><span class="line">            "<span class="attribute">createOption</span>":<span class="value"><span class="string">"Empty"</span></span>,</span><br><span class="line">            "<span class="attribute">vhd</span>":<span class="value">&#123;</span><br><span class="line">                  "<span class="attribute">Uri</span>":<span class="value"><span class="string">"[variables('dataDiskUri')]"</span></span><br><span class="line">            </span>&#125;</span><br><span class="line">      </span>&#125;]</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>lun (Logical Unit Number) should be unique for each attached disk and starts from zero.</li>
+<li>diskSizeGB has a maximum of 1000 (1 TB) in Azure currently.</li>
+<li>createOption should be “Empty” for a new disk.</li>
+<li>vhd.Uri is the full path you want the blob created in.</li>
+</ul>
+<p>If we deployed the template with this now, we will get a raw unformatted disk with no drive label. You can view it in Disk Manager or by running the following PowerShell on the box.</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Get-Disk | Where partitionstyle <span class="operator">-eq</span> <span class="string">'raw'</span></span><br></pre></td></tr></table></figure>
+<p>We need one more resource to complete the deployment and give us a formatted disk. We can use the CustomScriptExtension to run a PowerShell script which will format any raw attached disks (in case you want to do multiple drives).</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   "<span class="attribute">type</span>":<span class="value"><span class="string">"Microsoft.Compute/virtualMachines/extensions"</span></span>,</span><br><span class="line">   "<span class="attribute">name</span>":<span class="value"><span class="string">"[concat(variables('vmName'),'/InitialiseDisks')]"</span></span>,</span><br><span class="line">   "<span class="attribute">apiVersion</span>":<span class="value"><span class="string">"2015-05-01-preview"</span></span>,</span><br><span class="line">   "<span class="attribute">location</span>":<span class="value"><span class="string">"[resourceGroup().location]"</span></span>,</span><br><span class="line">   "<span class="attribute">dependsOn</span>":<span class="value">[</span><br><span class="line">      <span class="string">"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"</span></span><br><span class="line">   ]</span>,</span><br><span class="line">   "<span class="attribute">properties</span>":<span class="value">&#123;</span><br><span class="line">      "<span class="attribute">publisher</span>":<span class="value"><span class="string">"Microsoft.Compute"</span></span>,</span><br><span class="line">      "<span class="attribute">type</span>":<span class="value"><span class="string">"CustomScriptExtension"</span></span>,</span><br><span class="line">      "<span class="attribute">typeHandlerVersion</span>":<span class="value"><span class="string">"1.2"</span></span>,</span><br><span class="line">      "<span class="attribute">settings</span>":<span class="value">&#123;</span><br><span class="line">         "<span class="attribute">fileUris</span>":<span class="value">[</span><br><span class="line">            <span class="string">"[variables('initialiseDisksScript')]"</span></span><br><span class="line">         ]</span>,</span><br><span class="line">         "<span class="attribute">commandToExecute</span>":<span class="value"><span class="string">"[concat('powershell -ExecutionPolicy Unrestricted -file ',parameters('scriptName'))]"</span></span><br><span class="line">      </span>&#125;</span><br><span class="line">   </span>&#125;</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>dependsOn will need to be the resource path for our virtual machine to ensure this extension is run after its provisioned.</li>
+<li>fileUris is an array of any files we want downloaded and made available to execute. <strong>This needs to be a path to an azure blob</strong>, unfortunately you cannot link to any other domains like github.</li>
+<li>commandToExecute is a cmd.exe command, so we need to call out to powershell to invoke our script. The working directory will have your downloaded file already there, so you don’t need the full path to execute it, just the name.</li>
+</ul>
+<p>You will need to upload the following script to a blob:</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Get-Disk | ` </span><br><span class="line">Where partitionstyle <span class="operator">-eq</span> <span class="string">'raw'</span> | ` </span><br><span class="line">Initialize-Disk -PartitionStyle MBR -PassThru | ` </span><br><span class="line">New-Partition -AssignDriveLetter -UseMaximumSize | ` </span><br><span class="line">Format-Volume -FileSystem NTFS -NewFileSystemLabel <span class="string">"datadisk"</span> -Confirm:<span class="variable">$false</span></span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services ]]>
+    </summary>
+    
+      <category term="azure" scheme="http://naeem.khedarun.com/blog/tags/azure/"/>
+    
+      <category term="powershell" scheme="http://naeem.khedarun.com/blog/tags/powershell/"/>
+    
+      <category term="operations" scheme="http://naeem.khedarun.com/blog/categories/operations/"/>
+    
+  </entry>
+  
+</feed>
