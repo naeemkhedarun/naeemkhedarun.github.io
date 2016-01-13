@@ -4933,7 +4933,7 @@ button.close {
  }
 
 .navbar {
-  border: none;
+  border: none; }
   .navbar-brand {
     font-size: 24px; }
   .navbar-inverse .form-control {

@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://naeem.khedarun.com/blog
+url: http://naeem.khedarun.co.uk/blog
 root: /blog
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -94,3 +94,8 @@ optimize:
   js_filepath:  ../js/
   js_webpath:  /js/
   
+  feed:
+    type: atom
+    path: atom.xml
+    limit: 0
+    hub:
