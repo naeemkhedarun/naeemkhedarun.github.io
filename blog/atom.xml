@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-14T16:43:11.000Z</updated>
+  <updated>2016-01-14T16:51:20.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -16,10 +16,10 @@
   
   <entry>
     <title><![CDATA[Sharding data across service fabric partitions]]></title>
-    <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/untitled-1452597860697/"/>
-    <id>http://naeem.khedarun.co.uk/blog/2016/01/14/untitled-1452597860697/</id>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/</id>
     <published>2016-01-14T14:58:24.000Z</published>
-    <updated>2016-01-14T16:43:11.000Z</updated>
+    <updated>2016-01-14T16:51:20.000Z</updated>
     <content type="html"><![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll ignore the singleton partitions as they won’t help us with sharding.</p>
 <ul>
 <li><strong>Named Partition</strong> - This is a fixed name for each partition configured at deploy time.</li>
