@@ -38,10 +38,12 @@
   <% if(page.cover) { %>
     <meta property="og:image" content="<%= page.cover %>" />
   <% } else { %>
-    <meta property="og:image" content="<%= config.cover %>"/>
+    <meta property="og:image" content="/images/code-cover.png"/>
   <% } %>
 
-  <link href="<%- config.root %>favicon.png" rel="icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
 
   <link rel="alternate" href="<% if (theme.rss){ %><%- theme.rss %><% } else { %><%- config.root %>atom.xml<% } %>" title="<%= config.title %>" type="application/atom+xml">
   
