@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-14T16:51:20.000Z</updated>
+  <updated>2016-01-15T12:08:57.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -15,11 +15,39 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[Getting the number of service fabric partitions]]></title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/</id>
+    <published>2016-01-14T16:34:19.000Z</published>
+    <updated>2016-01-15T12:08:57.000Z</updated>
+    <content type="html"><![CDATA[<p>You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fabricClient = <span class="keyword">new</span> FabricClient();</span><br><span class="line"><span class="keyword">var</span> partitions = <span class="keyword">await</span> fabricClient.QueryManager.GetPartitionListAsync(</span><br><span class="line">    <span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> partition = partitions[<span class="number">0</span>] <span class="comment">//Select the first partition;</span></span><br><span class="line"><span class="keyword">var</span> partitionLowKey = ((Int64RangePartitionInformation)partition.PartitionInformation).LowKey;</span><br></pre></td></tr></table></figure>
+<p>The result of <code>GetPartitionListAsync</code> should never change for a service as you can’t change the partition information after a service has been created. It would be safe and give better performance to cache this. </p>
+<p>The endpoint of the primary replica however can move between machines, so this does need to be resolved more frequently. You can also cache this if you have a retry strategy that will re-resolve after an <code>EndpointNotFoundException</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> resolver = <span class="keyword">new</span> ServicePartitionResolver(() =&gt; fabricClient);</span><br><span class="line"><span class="keyword">var</span> resolvedPartition = <span class="keyword">await</span> resolver.ResolveAsync(<span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>), partitionLowKey, CancellationToken.None);</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the c]]>
+    </summary>
+    
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
+    
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
+      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Sharding data across service fabric partitions]]></title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/</id>
     <published>2016-01-14T14:58:24.000Z</published>
-    <updated>2016-01-14T16:51:20.000Z</updated>
+    <updated>2016-01-15T12:08:22.000Z</updated>
     <content type="html"><![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll ignore the singleton partitions as they won’t help us with sharding.</p>
 <ul>
 <li><strong>Named Partition</strong> - This is a fixed name for each partition configured at deploy time.</li>
@@ -224,6 +252,16 @@
     <summary type="html">
     <![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll igno]]>
     </summary>
+    
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
+    
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
+      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
   </entry>
   

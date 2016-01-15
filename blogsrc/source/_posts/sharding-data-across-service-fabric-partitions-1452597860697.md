@@ -1,6 +1,11 @@
 title: Sharding data across service fabric partitions
-tags: []
-categories: []
+tags:
+  - 'C#'
+  - azure
+  - .NET
+  - servicefabric
+categories:
+  - development
 date: 2016-01-14 14:58:24
 ---
 
