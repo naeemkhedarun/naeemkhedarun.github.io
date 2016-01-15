@@ -16,6 +16,12 @@
     margin-right:10px;
 }
 
+@media (max-width: 767px) {
+    .code pre {
+        font-size: 8px;
+    }
+}
+
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif;
