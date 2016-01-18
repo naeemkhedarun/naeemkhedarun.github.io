@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-18T12:21:29.000Z</updated>
+  <updated>2016-01-18T14:49:42.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -13,6 +13,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Publish live reliable actor telemetry from service fabric]]></title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/</id>
+    <published>2016-01-18T12:25:39.000Z</published>
+    <updated>2016-01-18T14:49:42.000Z</updated>
+    <content type="html"><![CDATA[<p>After you’ve got your service fabric application live, you might see performance issues which you didn’t pick up in testing or simulated load tests. This could be for a number of reasons.</p>
+<ul>
+<li>Unexpected actor bottleneck, they are <a href="https://azure.microsoft.com/en-gb/documentation/articles/service-fabric-reliable-actors-introduction/#concurrency" target="_blank" rel="external">single threaded</a>.</li>
+<li>Time spent waiting on a bottlenecked actor.</li>
+<li>Large state affecting IO performance.</li>
+</ul>
+<p>Reliable actors do not yet have interception interfaces to add in this kind of detailed telemetry, but with careful code its possible to do this with a dynamic proxy. I chose to use <a href="http://www.lightinject.net/#interception" target="_blank" rel="external">LightInject</a> for this but most of the framework would do the same job. I use statsd and graphite as my telemetry platform and I’ve had good experiences with <a href="https://github.com/Pereingo/statsd-csharp-client" target="_blank" rel="external">this nuget package</a></p>
+<p>We need to intercept object on both sides of the network boundary to cover these scenarios.</p>
+<ul>
+<li>Service fabrics initialisation to trace <em>OnLoadStateAsync</em>, <em>OnActivateAsync</em>, etc…</li>
+<li>Fabric client initialisation to trace client interface calls <em>IActorInterface.YourDoWorkMethodAsync</em>.</li>
+</ul>
+<p>We can trace the former by using service fabrics dependency injection support to initialise the actors with a proxy inbetween. First we override fabrics initialisation to use our DI container which has dynamic proxy support.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">fabricRuntime.RegisterActorFactory(() =&gt; </span><br><span class="line">    ServiceLocator.Current.GetInstance&lt;YourActor&gt;());</span><br></pre></td></tr></table></figure>
+<p>Next we tell our DI container to resolve these types with a proxy that includes our telemetry interceptor.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">serviceRegistry.Intercept(registration =&gt; </span><br><span class="line">    <span class="keyword">typeof</span>(IActor).IsAssignableFrom(registration.ServiceType),</span><br><span class="line">    (factory, definition) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        definition.Implement(factory.GetInstance&lt;ActorInterceptor&gt;);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>This will catch the timings for any calls to actors made by the fabric system. Now we need to get the timings for all the calls we make, both <em>actor to actor</em> and <em>client to actor</em>.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorFactory</span> : <span class="title">IActorFactory</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">readonly</span> ActorInterceptor _actorInterceptor;</span><br><span class="line">    <span class="keyword">readonly</span> ConcurrentDictionary&lt;Type, Type&gt; _proxies = </span><br><span class="line">        <span class="keyword">new</span> ConcurrentDictionary&lt;Type, Type&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActorFactory</span>(<span class="params">ActorInterceptor actorInterceptor</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        _actorInterceptor = actorInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> T Get&lt;T&gt;(ActorId actorId) <span class="keyword">where</span> T : IActor</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> proxyType = _proxies.GetOrAdd(<span class="keyword">typeof</span>(T), type =&gt;</span><br><span class="line">            <span class="keyword">new</span> ProxyBuilder().GetProxyType(</span><br><span class="line">                <span class="keyword">new</span> ProxyDefinition(<span class="keyword">typeof</span>(T), <span class="keyword">true</span>).Implement(</span><br><span class="line">                    () =&gt; _actorInterceptor)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (T)Activator.CreateInstance(proxyType, </span><br><span class="line">            <span class="keyword">new</span> Lazy&lt;T&gt;(() =&gt; ActorProxy.Create&lt;T&gt;(actorId)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Above we’ve created a factory class which should be used by clients and actors to create the proxied ActorProxies. We cache the generated proxy types in a thread safe dictionary as they are <a href="http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/">expensive to create</a>.</p>
+<p>Lastly we need the intercetor itself. We need to be sympathetic towards:</p>
+<ul>
+<li>All actor calls return a Task.</li>
+<li>Avoid blocking calls by calling <code>Result</code> or <code>Wait</code> on the task.</li>
+</ul>
+<p>We can use a task continuation to handle the writing of telemetry together with a closure to capture the timer. If there is a return value we should return it, and for whatever reason that value is not a Task then we won’t try to add the continuation.</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorInterceptor</span> : <span class="title">IInterceptor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">Invoke</span>(<span class="params">IInvocationInfo invocationInfo</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> name = <span class="keyword">string</span>.Format(<span class="string">"Actors.&#123;0&#125;.&#123;1&#125;"</span>,</span><br><span class="line">            invocationInfo.Proxy.Target.GetType().Name,</span><br><span class="line">            invocationInfo.Method.Name);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> timer = Metrics.StartTimer(name);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> returnValue = invocationInfo.Proceed();</span><br><span class="line"></span><br><span class="line">        (returnValue <span class="keyword">as</span> Task)?.ContinueWith(task =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">           timer.Dispose();</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> returnValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>If you have your metrics library configured to push to a graphite backend you can use the following query to graph it:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">stats.timers.actors.*.*.mean&#10;stats.timers.actors.*.*.count</span><br></pre></td></tr></table></figure>
+<p><img src="/blog/images/actor-telemetry.png" alt="actor telemetry"></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>After you’ve got your service fabric application live, you might see performance issues which you didn’t pick up in testing or simulated ]]>
+    </summary>
+    
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
+    
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
+      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[A look at performance on .NET dynamic proxies]]></title>
