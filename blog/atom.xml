@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-15T12:08:57.000Z</updated>
+  <updated>2016-01-18T12:21:29.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -13,6 +13,145 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[A look at performance on .NET dynamic proxies]]></title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/</id>
+    <published>2016-01-18T09:00:00.000Z</published>
+    <updated>2016-01-18T12:21:29.000Z</updated>
+    <content type="html"><![CDATA[<p>I currently use <a href="http://www.lightinject.net/" target="_blank" rel="external">LightInject</a> for dependency injection primarily for its good performance and well documented features. I needed to proxy our service fabric actors to trace call timings and I wanted to see if their <a href="http://www.lightinject.net/#interception" target="_blank" rel="external">interception</a> package was competitive with other open source offerings.</p>
+<p>We’ll take a look at:</p>
+<ul>
+<li><a href="https://github.com/castleproject/Core" target="_blank" rel="external">Castle Dynamic Proxy</a> - This is likely the most popular dynamic proxy library for .NET.</li>
+<li><a href="http://www.lightinject.net/#interception" target="_blank" rel="external">LightInject Interceptor</a> - I hadn’t heard of this one until I started using LightInject.</li>
+<li><a href="https://github.com/mtamme/NProxy" target="_blank" rel="external">NProxy</a> - Also a new one to me, but I’ve added it since it is easy to use.</li>
+</ul>
+<h3 id="Creating_proxy_instances">Creating proxy instances</h3><chart type="BarChart" options="{'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Average Time (us)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Castle</td>
+<td>2.5237 us</td>
+</tr>
+<tr>
+<td>LightInject</td>
+<td>1047.9463 us</td>
+</tr>
+<tr>
+<td>NProxy</td>
+<td>1.7470 us</td>
+</tr>
+</tbody>
+</table>
+<p>I was quite surprised to see such a difference between the frameworks. I guessed that both NProxy and Castle cache their proxy types internally, which LightInject expects you to handle your own caching. Something good to bear in mind! </p>
+<p>After caching the proxy type things are a little more competitive:</p>
+<chart type="BarChart" options="{'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Average Time (ns)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Castle</td>
+<td>2437.7655 ns</td>
+</tr>
+<tr>
+<td>LightInject</td>
+<td>100.6836 ns</td>
+</tr>
+<tr>
+<td>NProxy</td>
+<td>1670.7880 ns</td>
+</tr>
+</tbody>
+</table>
+<p>I still think the code can be more optimal in all cases, so I reduced everything as much as possible to a single call to activate the proxy type. I’ve included timings for <code>Activator.CreateInstance</code> and the standard constructor against the non-proxy type as a baseline.</p>
+<chart type="BarChart" options="{'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Average Time (ns)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Castle</td>
+<td>109.5888 ns</td>
+</tr>
+<tr>
+<td>LightInject</td>
+<td>99.2248 ns</td>
+</tr>
+<tr>
+<td>NProxy</td>
+<td>1041.4311 ns</td>
+</tr>
+<tr>
+<td>Activator</td>
+<td>77.9584 ns</td>
+</tr>
+<tr>
+<td>Constructor</td>
+<td>6.7176 ns</td>
+</tr>
+</tbody>
+</table>
+<p>Things are much closer now! The difference between Castle and LightInject are negligible. There might be a way to optimise NProxy further but the API didn’t yield any obvious optimisations.</p>
+<h3 id="Calling_proxied_methods">Calling proxied methods</h3><p>Now let’s take a look at the runtime overhead of calling a proxied object. I’ve included an unproxied instance as a baseline.</p>
+<chart type="BarChart" options="{'hAxis':{'baseline':0}, 'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Average Time (ns)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Castle</td>
+<td>2.9992 ns</td>
+</tr>
+<tr>
+<td>LightInject</td>
+<td>2.9826 ns</td>
+</tr>
+<tr>
+<td>NProxy</td>
+<td>2.9893 ns</td>
+</tr>
+<tr>
+<td>No Proxy</td>
+<td>3.0494 ns</td>
+</tr>
+</tbody>
+</table>
+<p>Surprisingly there is no overhead with any of the libraries with calling the proxied object. The graph looks skewed due to how close the results are and the timings are in nanoseconds. This is great news and we can use whichever library we want guilt-free. </p>
+<p>You can review the code for the benchmarks on <a href="https://github.com/naeemkhedarun/Benchmarks/blob/master/Benchmarking/DynamicProxyBenchmark.cs" target="_blank" rel="external">github</a>.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>I currently use <a href="http://www.lightinject.net/" target="_blank" rel="external">LightInject</a> for dependency injection primarily f]]>
+    </summary>
+    
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Getting the number of service fabric partitions]]></title>
