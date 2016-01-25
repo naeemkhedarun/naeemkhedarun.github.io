@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-18T14:49:42.000Z</updated>
+  <updated>2016-01-21T16:00:57.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -13,6 +13,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Use Visual Studio Code as the default Git editor]]></title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/</id>
+    <published>2016-01-21T15:58:44.000Z</published>
+    <updated>2016-01-21T16:00:57.000Z</updated>
+    <content type="html"><![CDATA[<p>I am not familar with the default <a href="http://www.vim.org/" target="_blank" rel="external">Vim</a> editor that comes with <a href="https://git-scm.com/" target="_blank" rel="external">Git</a>, which makes interactive rebases difficult. It took me a while until I realised you can configure this. Thanks to <a href="http://stackoverflow.com/users/431072/f-boucheros" target="_blank" rel="external">F Boucheros</a> this is quite easy!</p>
+<blockquote>
+<p>git config –global core.editor “‘C:\Program Files (x86)\Microsoft VS Code\code.exe’ -w”  </p>
+</blockquote>
+<p>And now when you run your <code>git rebase -i</code> the todo log will open in vscode.</p>
+<p><img src="/blog/images/vscode-rebase.png" alt=""></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>I am not familar with the default <a href="http://www.vim.org/" target="_blank" rel="external">Vim</a> editor that comes with <a href="ht]]>
+    </summary>
+    
+      <category term="git" scheme="http://naeem.khedarun.co.uk/blog/tags/git/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Publish live reliable actor telemetry from service fabric]]></title>
