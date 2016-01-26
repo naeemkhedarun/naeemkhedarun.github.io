@@ -1,5 +1,6 @@
 title: Create a Chrome app for the Service Fabric Explorer
 cover: images/servicefabric-dashboard.png
+description: The new web based fabric explorer has a much nicer interface than the old desktop application. However we've lost the ability to pin it to the taskbar for quick shortcuts and having it as a chrome tab is less convenient than its own window.
 tags:
   - servicefabric
 categories:

@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-26T02:31:03.000Z</updated>
+  <updated>2016-01-26T13:08:16.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/</id>
     <published>2016-01-25T13:29:56.000Z</published>
-    <updated>2016-01-26T02:31:03.000Z</updated>
+    <updated>2016-01-26T13:08:16.000Z</updated>
     <content type="html"><![CDATA[<p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it to the taskbar for quick shortcuts <code>win+n</code> and having it as a chrome tab is less convenient than its own window.</p>
 <p>Thankfully Chrome can help with that. Open the fabric explorer:</p>
 <blockquote>
@@ -32,7 +32,8 @@
 <p>Don’t forget to take advantage of the default windows taskbar keyboard shortcuts. I have it<br>pinned as the fourth taskbar item, so its quick to switch using <code>win+4</code>.</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it t]]>
+    <![CDATA[The new web based fabric explorer has a much nicer interface than the old desktop application. However we've lost the ability to pin it to the taskbar for quick shortcuts and having it as a chrome tab is less convenient than its own window.]]>
+    
     </summary>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
@@ -46,7 +47,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/</id>
     <published>2016-01-21T15:58:44.000Z</published>
-    <updated>2016-01-21T16:00:57.000Z</updated>
+    <updated>2016-01-26T13:10:06.000Z</updated>
     <content type="html"><![CDATA[<p>I am not familar with the default <a href="http://www.vim.org/" target="_blank" rel="external">Vim</a> editor that comes with <a href="https://git-scm.com/" target="_blank" rel="external">Git</a>, which makes interactive rebases difficult. It took me a while until I realised you can configure this. Thanks to <a href="http://stackoverflow.com/users/431072/f-boucheros" target="_blank" rel="external">F Boucheros</a> this is quite easy!</p>
 <blockquote>
 <p>git config –global core.editor “‘C:\Program Files (x86)\Microsoft VS Code\code.exe’ -w”  </p>
@@ -55,7 +56,8 @@
 <p><img src="/blog/images/vscode-rebase.png" alt=""></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>I am not familar with the default <a href="http://www.vim.org/" target="_blank" rel="external">Vim</a> editor that comes with <a href="ht]]>
+    <![CDATA[I am not familar with the default Vim editor that comes with Git. It took me a while until I realised you can configure this.]]>
+    
     </summary>
     
       <category term="git" scheme="http://naeem.khedarun.co.uk/blog/tags/git/"/>
@@ -69,7 +71,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/</id>
     <published>2016-01-18T12:25:39.000Z</published>
-    <updated>2016-01-18T14:49:42.000Z</updated>
+    <updated>2016-01-26T13:09:07.000Z</updated>
     <content type="html"><![CDATA[<p>After you’ve got your service fabric application live, you might see performance issues which you didn’t pick up in testing or simulated load tests. This could be for a number of reasons.</p>
 <ul>
 <li>Unexpected actor bottleneck, they are <a href="https://azure.microsoft.com/en-gb/documentation/articles/service-fabric-reliable-actors-introduction/#concurrency" target="_blank" rel="external">single threaded</a>.</li>
@@ -101,7 +103,8 @@
 <p><img src="/blog/images/actor-telemetry.png" alt="actor telemetry"></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>After you’ve got your service fabric application live, you might see performance issues which you didn’t pick up in testing or simulated ]]>
+    <![CDATA[After you've got your service fabric application live, you might see performance issues which you didn't pick up in testing or simulated load tests.]]>
+    
     </summary>
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
@@ -121,7 +124,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/</id>
     <published>2016-01-18T09:00:00.000Z</published>
-    <updated>2016-01-18T12:21:29.000Z</updated>
+    <updated>2016-01-26T13:07:19.000Z</updated>
     <content type="html"><![CDATA[<p>I currently use <a href="http://www.lightinject.net/" target="_blank" rel="external">LightInject</a> for dependency injection primarily for its good performance and well documented features. I needed to proxy our service fabric actors to trace call timings and I wanted to see if their <a href="http://www.lightinject.net/#interception" target="_blank" rel="external">interception</a> package was competitive with other open source offerings.</p>
 <p>We’ll take a look at:</p>
 <ul>
@@ -246,7 +249,8 @@
 <p>You can review the code for the benchmarks on <a href="https://github.com/naeemkhedarun/Benchmarks/blob/master/Benchmarking/DynamicProxyBenchmark.cs" target="_blank" rel="external">github</a>.</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>I currently use <a href="http://www.lightinject.net/" target="_blank" rel="external">LightInject</a> for dependency injection primarily f]]>
+    <![CDATA[I needed to proxy our service fabric actors to trace call timings and I wanted to see if their interception package was competitive with other open source offerings.]]>
+    
     </summary>
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
@@ -260,7 +264,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/</id>
     <published>2016-01-14T16:34:19.000Z</published>
-    <updated>2016-01-15T12:08:57.000Z</updated>
+    <updated>2016-01-26T13:08:29.000Z</updated>
     <content type="html"><![CDATA[<p>You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.</p>
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fabricClient = <span class="keyword">new</span> FabricClient();</span><br><span class="line"><span class="keyword">var</span> partitions = <span class="keyword">await</span> fabricClient.QueryManager.GetPartitionListAsync(</span><br><span class="line">    <span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> partition = partitions[<span class="number">0</span>] <span class="comment">//Select the first partition;</span></span><br><span class="line"><span class="keyword">var</span> partitionLowKey = ((Int64RangePartitionInformation)partition.PartitionInformation).LowKey;</span><br></pre></td></tr></table></figure>
 <p>The result of <code>GetPartitionListAsync</code> should never change for a service as you can’t change the partition information after a service has been created. It would be safe and give better performance to cache this. </p>
@@ -268,7 +272,8 @@
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> resolver = <span class="keyword">new</span> ServicePartitionResolver(() =&gt; fabricClient);</span><br><span class="line"><span class="keyword">var</span> resolvedPartition = <span class="keyword">await</span> resolver.ResolveAsync(<span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>), partitionLowKey, CancellationToken.None);</span><br></pre></td></tr></table></figure>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the c]]>
+    <![CDATA[You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.]]>
+    
     </summary>
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
@@ -288,7 +293,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/</id>
     <published>2016-01-14T14:58:24.000Z</published>
-    <updated>2016-01-15T12:08:22.000Z</updated>
+    <updated>2016-01-26T13:09:24.000Z</updated>
     <content type="html"><![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll ignore the singleton partitions as they won’t help us with sharding.</p>
 <ul>
 <li><strong>Named Partition</strong> - This is a fixed name for each partition configured at deploy time.</li>
@@ -491,7 +496,8 @@
 <h3 id="Conclusion">Conclusion</h3><p>Based on these results I would use the ranged partitioning method, it produces provides good balancing and is fast to compute. An additional advantage is you do not need to know the partition count in the code, just map your data to an <code>Int64</code> and service fabric will do the rest. </p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll igno]]>
+    <![CDATA[Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service.]]>
+    
     </summary>
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
@@ -511,7 +517,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/</id>
     <published>2016-01-05T15:46:54.000Z</published>
-    <updated>2016-01-09T18:33:06.000Z</updated>
+    <updated>2016-01-26T13:08:49.000Z</updated>
     <content type="html"><![CDATA[<p>With most applications its easy to get started on logging.</p>
 <ul>
 <li>Install a logging framework like NLog or log4net.</li>
@@ -527,10 +533,8 @@
 <p>If you know any other events or ways to get more of these unexpected errors please let me know!</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>With most applications its easy to get started on logging.</p>
-<ul>
-<li>Install a logging framework like NLog or log4net.</li>
-<li>Put tr]]>
+    <![CDATA[With most applications its easy to get started on logging. However this will not log unhandled exceptions from places you couldn't forsee. So let's log these just in case anything goes wrong.]]>
+    
     </summary>
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
@@ -546,7 +550,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/"/>
     <id>http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/</id>
     <published>2015-12-03T12:02:16.000Z</published>
-    <updated>2015-12-06T17:25:04.000Z</updated>
+    <updated>2016-01-26T13:07:49.000Z</updated>
     <content type="html"><![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working. This is based on the <a href="https://github.com/Azure/azure-quickstart-templates/tree/master/windows-vm-custom-script" target="_blank" rel="external">custom script quickstart template</a> and <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2013/05/29/use-powershell-to-initialize-raw-disks-and-partition-and-format-volumes.aspx" target="_blank" rel="external">Ed Wilsons formatting script article</a></p>
 <h3 id="Attach_a_disk">Attach a disk</h3><p>To attach a data disk to the virtual machine you can use the following configuration just below the osDisk definition.</p>
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      "<span class="attribute">dataDisks</span>":<span class="value">[&#123;</span><br><span class="line">            "<span class="attribute">lun</span>":<span class="value"><span class="number">0</span></span>,</span><br><span class="line">            "<span class="attribute">name</span>":<span class="value"><span class="string">"datadisk"</span></span>,</span><br><span class="line">            "<span class="attribute">diskSizeGB</span>":<span class="value"><span class="number">1000</span></span>,</span><br><span class="line">            "<span class="attribute">createOption</span>":<span class="value"><span class="string">"Empty"</span></span>,</span><br><span class="line">            "<span class="attribute">vhd</span>":<span class="value">&#123;</span><br><span class="line">                  "<span class="attribute">Uri</span>":<span class="value"><span class="string">"[variables('dataDiskUri')]"</span></span><br><span class="line">            </span>&#125;</span><br><span class="line">      </span>&#125;]</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
@@ -569,7 +573,8 @@
 <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Get-Disk | ` </span><br><span class="line">Where partitionstyle <span class="operator">-eq</span> <span class="string">'raw'</span> | ` </span><br><span class="line">Initialize-Disk -PartitionStyle MBR -PassThru | ` </span><br><span class="line">New-Partition -AssignDriveLetter -UseMaximumSize | ` </span><br><span class="line">Format-Volume -FileSystem NTFS -NewFileSystemLabel <span class="string">"datadisk"</span> -Confirm:<span class="variable">$false</span></span><br></pre></td></tr></table></figure>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services ]]>
+    <![CDATA[Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working.]]>
+    
     </summary>
     
       <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>

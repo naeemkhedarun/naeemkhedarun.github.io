@@ -1,4 +1,5 @@
 title: Sharding data across service fabric partitions
+description: Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. 
 tags:
   - 'C#'
   - azure

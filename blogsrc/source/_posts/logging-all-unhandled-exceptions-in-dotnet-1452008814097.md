@@ -1,4 +1,5 @@
 title: Logging all unhandled exceptions in .NET
+description: With most applications its easy to get started on logging. However this will not log unhandled exceptions from places you couldn't forsee. So let's log these just in case anything goes wrong.
 tags:
   - .NET
   - 'C#'

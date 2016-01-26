@@ -1,4 +1,5 @@
 title: Publish live reliable actor telemetry from service fabric
+description: After you've got your service fabric application live, you might see performance issues which you didn't pick up in testing or simulated load tests. 
 tags:
   - .NET
   - 'C#'

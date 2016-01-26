@@ -1,4 +1,5 @@
 title: A look at performance on .NET dynamic proxies
+description: I needed to proxy our service fabric actors to trace call timings and I wanted to see if their interception package was competitive with other open source offerings.
 tags:
   - .NET
 categories:

@@ -1,4 +1,5 @@
 title: Use Visual Studio Code as the default Git editor
+description: I am not familar with the default Vim editor that comes with Git. It took me a while until I realised you can configure this. 
 cover: images/vscode-rebase.png
 tags:
   - git

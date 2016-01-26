@@ -1,4 +1,5 @@
 title: Getting the number of service fabric partitions
+description: You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.
 tags:
   - .NET
   - 'C#'

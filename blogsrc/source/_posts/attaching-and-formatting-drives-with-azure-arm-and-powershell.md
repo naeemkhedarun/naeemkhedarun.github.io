@@ -1,4 +1,5 @@
 title: Attaching and formatting drives with Azure ARM and PowerShell
+description: Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working.
 tags:
   - powershell
   - azure
