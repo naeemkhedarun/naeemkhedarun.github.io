@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>powershell | Naeem Khedarun</title>
+  <title>Create a Chrome app for the Service Fabric Explorer | Naeem Khedarun</title>
   <meta name="author" content="Naeem Khedarun">
+  
+  <meta name="description" content="The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it to the taskbar">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  
+  <meta property="og:title" content="Create a Chrome app for the Service Fabric Explorer"/>
   <meta property="og:site_name" content="Naeem Khedarun"/>
 
   
-    <meta property="og:image" content="http://naeem.khedarun.co.uk/blog/images/code-cover.png"/>
+    <meta property="og:image" content="http://naeem.khedarun.co.uk/blog/images/servicefabric-dashboard.png" />
   
 
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
@@ -60,24 +62,57 @@
       <div class="container">
         <div class="row">
           <div class="col-12 col-md-12">
-<div class="container">
+  
+  
+    <h1 class="title">Create a Chrome app for the Service Fabric Explorer</h1>
+  
+
+  <i>13 hours ago</i>
+
+<p>
+
+  <p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it to the taskbar for quick shortcuts <code>win+n</code> and having it as a chrome tab is less convenient than its own window.</p>
+<p>Thankfully Chrome can help with that. Open the fabric explorer:</p>
+<blockquote>
+<p><a href="http://localhost:19080/explorer" target="_blank" rel="external">http://localhost:19080/explorer</a></p>
+</blockquote>
+<p>Create the desktop app:</p>
+<p><img src="/blog/images/chrome-create-application.png" alt="More tools -&gt; Create application shortcuts"></p>
+<p>Then you can pin it to the taskbar as you would normally. You’ll get a window with all the extra Chrome removed.</p>
+<p><img src="/blog/images/servicefabric-dashboard.png" alt=""></p>
+<p>Whenever I want to switch to it I can use the taskbar shortcuts which in my case is <code>Win+4</code>.</p>
+
+
+</p>
+
+  
+  
+  
+  <div class="categories">
+    <span>Posted in: </span><a href="/blog/categories/development/">development</a>
+  </div>
+
+
+  
+  
+  <div class="tags">
+    <span>Tagged with: </span><a href="/blog/tags/servicefabric/">servicefabric</a>
+  </div>
+
+
+<br />
+<hr />
+
 <div class="row">
-<div class="col-12 col-md-12">
-  <h1>powershell</h1>
+<div class="col-md-12">
+  <h3>Comments</h3>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  </div>
+</div>
 
-  <p>
-  
-    <div class="icon"></div>
-    <time datetime="2015-12-03T12:02:16.000Z"><a href="/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/">2015-12-03</a></time>
-    
-      <h1 class="title"><a href="/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/">Attaching and formatting drives with Azure ARM and PowerShell</a></h1>
-    
-  
-  </p>
 
-</div>
-</div>
-</div>
 </div>
         </div>
     
@@ -124,7 +159,7 @@ var disqus_shortname = 'naeemkhedarun';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>

@@ -4,7 +4,7 @@
   
   <link href="/blog/atom.xml" rel="self"/>
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-21T16:00:57.000Z</updated>
+  <updated>2016-01-26T02:27:29.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -13,6 +13,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Create a Chrome app for the Service Fabric Explorer]]></title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/</id>
+    <published>2016-01-25T13:29:56.000Z</published>
+    <updated>2016-01-26T02:27:29.000Z</updated>
+    <content type="html"><![CDATA[<p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it to the taskbar for quick shortcuts <code>win+n</code> and having it as a chrome tab is less convenient than its own window.</p>
+<p>Thankfully Chrome can help with that. Open the fabric explorer:</p>
+<blockquote>
+<p><a href="http://localhost:19080/explorer" target="_blank" rel="external">http://localhost:19080/explorer</a></p>
+</blockquote>
+<p>Create the desktop app:</p>
+<p><img src="/blog/images/chrome-create-application.png" alt="More tools -&gt; Create application shortcuts"></p>
+<p>Then you can pin it to the taskbar as you would normally. You’ll get a window with all the extra Chrome removed.</p>
+<p><img src="/blog/images/servicefabric-dashboard.png" alt=""></p>
+<p>Whenever I want to switch to it I can use the taskbar shortcuts which in my case is <code>Win+4</code>.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it t]]>
+    </summary>
+    
+      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Use Visual Studio Code as the default Git editor]]></title>
