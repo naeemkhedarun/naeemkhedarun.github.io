@@ -21,4 +21,5 @@ Then you can pin it to the taskbar as you would normally. You'll get a window wi
 
 ![](/blog/images/servicefabric-dashboard.png)
 
-Whenever I want to switch to it I can use the taskbar shortcuts which in my case is `Win+4`.
+Don't forget to take advantage of the default windows taskbar keyboard shortcuts. I have it
+pinned as the fourth taskbar item, so its quick to switch using `win+4`.
