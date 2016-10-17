@@ -1,25 +1,266 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[Naeem Khedarun]]></title>
+  <title>Naeem Khedarun</title>
   
   <link href="/blog/atom.xml" rel="self"/>
+  
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-01-26T13:08:16.000Z</updated>
+  <updated>2016-10-17T00:11:59.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
-    <name><![CDATA[Naeem Khedarun]]></name>
+    <name>Naeem Khedarun</name>
     
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[Create a Chrome app for the Service Fabric Explorer]]></title>
+    <title>Azure Networking Bandwidth: Public IP vs Peered Networking</title>
+    <link href="http://naeem.khedarun.co.uk/blog/2016/10/16/Azure-Networking-Bandwidth-Public-IP-vs-Peered-Networking-1476657686312/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2016/10/16/Azure-Networking-Bandwidth-Public-IP-vs-Peered-Networking-1476657686312/</id>
+    <published>2016-10-16T22:54:30.000Z</published>
+    <updated>2016-10-17T00:11:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>We have a application setup which might be familiar to you; A cloud service in a classic virtual network (v1) which communicates with a database in an ARM virtual network (v2). Ideally we would like both of these services in a single network, but are restricted from doing so due to the deployment models. We had a discussion which involved performance, security and ideal topologies, however this post will solely focus on performance.</p>
+<blockquote>
+<p>Is there a difference in latency and bandwidth when they are both hosted in the same region?</p>
+</blockquote>
+<h3 id="Test-setup"><a href="#Test-setup" class="headerlink" title="Test setup"></a>Test setup</h3><p>To reflect the setup we have for our application, two VMs were provisioned in North Europe.</p>
+<p><strong>Source</strong></p>
+<ul>
+<li>A3 (Large) Windows Cloud service</li>
+<li>Classic Virtual Network</li>
+</ul>
+<p><strong>Destination</strong></p>
+<ul>
+<li>DS13v2 Linux Virtual machine</li>
+<li>ARM Virtual Network peered to the Classic VNet</li>
+</ul>
+<h3 id="Traceroute"><a href="#Traceroute" class="headerlink" title="Traceroute"></a>Traceroute</h3><p>I first wanted to test the latency and number of hops between the VMs. ICMP is not available for this test as we are hitting a public IP, however we can use TCP by using <a href="https://blogs.msdn.microsoft.com/gsamant/2015/02/16/ping-and-tracert-commands-on-azure-vm/" target="_blank" rel="external">nmap</a>.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">PS C:\Users\user&gt; nmap -sS -Pn -p 80 --traceroute 13.xx.xx.xx</div><div class="line"></div><div class="line">HOP RTT     ADDRESS</div><div class="line">1   ... 7</div><div class="line">8   0.00 ms 13.xx.xx.xx</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">PS C:\Users\user&gt; nmap -sS -Pn -p 80 --traceroute 10.xx.xx.xx</div><div class="line"></div><div class="line">HOP RTT     ADDRESS</div><div class="line">1   0.00 ms 10.xx.xx.xx</div></pre></td></tr></table></figure>
+<p>We can see that there are 8 hops over the public IP, and as we expect only a single hop over the peered network. Both routes are still extremely fast with negligible ping times. This confirms my collegues suspicions; despite connecting to a public address the traffic probably never leaves the datacenters perimeter network. </p>
+<h3 id="Bandwidth-iperf3"><a href="#Bandwidth-iperf3" class="headerlink" title="Bandwidth (iperf3)"></a>Bandwidth (iperf3)</h3><p>To measure the bandwidth available between the VMs I’m using <a href="https://iperf.fr/iperf-download.php" target="_blank" rel="external">iperf3</a> which is cross platform. The test is run from the windows machine as a client and flows to the iperf server hosted on the linux box.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment"># Public IP test</span></div><div class="line">.\iperf3.exe -c 13.xx.xx.xx -i 1 -t 30</div><div class="line"></div><div class="line"><span class="comment"># Peered network test</span></div><div class="line">.\iperf3.exe -c 10.xx.xx.xx -i 1 -t 30</div></pre></td></tr></table></figure>
+<chart type="LineChart" options="{'legend':{'position':'bottom'}, 'height':'300', 'vAxis': { 'minValue': 0, 'title':'Bandwidth (Mbit)'}, 'hAxis':{'title':'Time (s)'}}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Seconds</th>
+<th>Public IP</th>
+<th>Peered</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>985</td>
+<td>996</td>
+</tr>
+<tr>
+<td>2</td>
+<td>951</td>
+<td>947</td>
+</tr>
+<tr>
+<td>3</td>
+<td>975</td>
+<td>976</td>
+</tr>
+<tr>
+<td>4</td>
+<td>936</td>
+<td>956</td>
+</tr>
+<tr>
+<td>5</td>
+<td>989</td>
+<td>962</td>
+</tr>
+<tr>
+<td>6</td>
+<td>958</td>
+<td>965</td>
+</tr>
+<tr>
+<td>7</td>
+<td>967</td>
+<td>962</td>
+</tr>
+<tr>
+<td>8</td>
+<td>959</td>
+<td>926</td>
+</tr>
+<tr>
+<td>9</td>
+<td>964</td>
+<td>985</td>
+</tr>
+<tr>
+<td>10</td>
+<td>961</td>
+<td>948</td>
+</tr>
+<tr>
+<td>11</td>
+<td>968</td>
+<td>953</td>
+</tr>
+<tr>
+<td>12</td>
+<td>960</td>
+<td>980</td>
+</tr>
+<tr>
+<td>13</td>
+<td>949</td>
+<td>957</td>
+</tr>
+<tr>
+<td>14</td>
+<td>976</td>
+<td>966</td>
+</tr>
+<tr>
+<td>15</td>
+<td>960</td>
+<td>949</td>
+</tr>
+<tr>
+<td>16</td>
+<td>966</td>
+<td>972</td>
+</tr>
+<tr>
+<td>17</td>
+<td>959</td>
+<td>954</td>
+</tr>
+<tr>
+<td>18</td>
+<td>966</td>
+<td>975</td>
+</tr>
+<tr>
+<td>19</td>
+<td>961</td>
+<td>969</td>
+</tr>
+<tr>
+<td>20</td>
+<td>964</td>
+<td>963</td>
+</tr>
+<tr>
+<td>21</td>
+<td>965</td>
+<td>962</td>
+</tr>
+<tr>
+<td>22</td>
+<td>962</td>
+<td>933</td>
+</tr>
+<tr>
+<td>23</td>
+<td>962</td>
+<td>993</td>
+</tr>
+<tr>
+<td>24</td>
+<td>958</td>
+<td>961</td>
+</tr>
+<tr>
+<td>25</td>
+<td>967</td>
+<td>958</td>
+</tr>
+<tr>
+<td>26</td>
+<td>963</td>
+<td>958</td>
+</tr>
+<tr>
+<td>27</td>
+<td>961</td>
+<td>956</td>
+</tr>
+<tr>
+<td>28</td>
+<td>963</td>
+<td>970</td>
+</tr>
+<tr>
+<td>29</td>
+<td>965</td>
+<td>962</td>
+</tr>
+<tr>
+<td>30</td>
+<td>962</td>
+<td>963</td>
+</tr>
+</tbody>
+</table>
+<p>Surprisingly, both achieve the desired bandwith (1Gbps) for the selected VM sizes. </p>
+<p>I was still curious if the performance profile was the same when upgrading both VMs to support 10Gbps networking. For this test both machines were upgraded to the DS14v2 VM size. To maximise the bandwidth I used iperfs <code>-P</code> switch to run concurrent workers. The buffer size was also increased to see the effect it has on the bandwidth.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment">#Public IP with 4 processes</span></div><div class="line">.\iperf3.exe -c 13.7xx.xx.xx -i 1 -t 30 -P 4</div><div class="line"><span class="comment">#Peered network with 4 processes</span></div><div class="line">.\iperf3.exe -c 10.xx.xx.xx -i 1 -t 30 -P 4</div><div class="line"><span class="comment">#Public IP with 4 processes and 32MB buffer</span></div><div class="line">.\iperf3.exe -c 13.xx.xx.xx -i 1 -t 30 -P 4 -w 32MB</div><div class="line"><span class="comment">#Peered network with 4 processes and 32MB buffer</span></div><div class="line">.\iperf3.exe -c 10.xx.xx.xx -i 1 -t 30 -P 4 -w 32MB</div></pre></td></tr></table></figure>
+<chart type="BarChart" options="{'hAxis':{'baseline':0}, 'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Bandwidth (Mbps)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Public IP</td>
+<td>2480</td>
+</tr>
+<tr>
+<td>Peered</td>
+<td>2630</td>
+</tr>
+<tr>
+<td>Public IP (32MB)</td>
+<td>3230</td>
+</tr>
+<tr>
+<td>Peered (32MB)</td>
+<td>2710</td>
+</tr>
+</tbody>
+</table>
+<p>As expected, with the default values the peered network performed better although the difference was marginal. More surprisingly, the public network had a high thoroughput when the buffer size was increased and despite running the test multiple times I am unable to explain why.</p>
+<p>For our workload and use case, I can say the performance difference between the two approaches is irrelevant. If you are evaluating whether you might gain network performance by switching to peered networking then I hope these numbers can help guide you. I would recommend running a similar test if you are choosing different VM sizes or workload.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;We have a application setup which might be familiar to you; A cloud service in a classic virtual network (v1) which communicates with a d
+    
+    </summary>
+    
+      <category term="operations" scheme="http://naeem.khedarun.co.uk/blog/categories/operations/"/>
+    
+    
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Create a Chrome app for the Service Fabric Explorer</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/25/create-a-chrome-app-for-the-service-fabric-explorer-1453728596801/</id>
     <published>2016-01-25T13:29:56.000Z</published>
-    <updated>2016-01-26T13:08:16.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>The new web based fabric explorer has a much nicer interface than the old desktop application. However we’ve lost the ability to pin it to the taskbar for quick shortcuts <code>win+n</code> and having it as a chrome tab is less convenient than its own window.</p>
 <p>Thankfully Chrome can help with that. Open the fabric explorer:</p>
 <blockquote>
@@ -31,23 +272,27 @@
 <p><img src="/blog/images/servicefabric-dashboard.png" alt=""></p>
 <p>Don’t forget to take advantage of the default windows taskbar keyboard shortcuts. I have it<br>pinned as the fourth taskbar item, so its quick to switch using <code>win+4</code>.</p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[The new web based fabric explorer has a much nicer interface than the old desktop application. However we've lost the ability to pin it to the taskbar for quick shortcuts and having it as a chrome tab is less convenient than its own window.]]>
+    
+      The new web based fabric explorer has a much nicer interface than the old desktop application. However we&#39;ve lost the ability to pin it to the taskbar for quick shortcuts and having it as a chrome tab is less convenient than its own window.
     
     </summary>
     
-      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
-    
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+    
+      <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Use Visual Studio Code as the default Git editor]]></title>
+    <title>Use Visual Studio Code as the default Git editor</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/21/use-visual-studio-code-as-the-default-git-editor-1453391604798/</id>
     <published>2016-01-21T15:58:44.000Z</published>
-    <updated>2016-01-26T13:10:06.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>I am not familar with the default <a href="http://www.vim.org/" target="_blank" rel="external">Vim</a> editor that comes with <a href="https://git-scm.com/" target="_blank" rel="external">Git</a>, which makes interactive rebases difficult. It took me a while until I realised you can configure this. Thanks to <a href="http://stackoverflow.com/users/431072/f-boucheros" target="_blank" rel="external">F Boucheros</a> this is quite easy!</p>
 <blockquote>
 <p>git config –global core.editor “‘C:\Program Files (x86)\Microsoft VS Code\code.exe’ -w”  </p>
@@ -55,23 +300,27 @@
 <p>And now when you run your <code>git rebase -i</code> the todo log will open in vscode.</p>
 <p><img src="/blog/images/vscode-rebase.png" alt=""></p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[I am not familar with the default Vim editor that comes with Git. It took me a while until I realised you can configure this.]]>
+    
+      I am not familar with the default Vim editor that comes with Git. It took me a while until I realised you can configure this.
     
     </summary>
     
-      <category term="git" scheme="http://naeem.khedarun.co.uk/blog/tags/git/"/>
-    
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+    
+      <category term="git" scheme="http://naeem.khedarun.co.uk/blog/tags/git/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Publish live reliable actor telemetry from service fabric]]></title>
+    <title>Publish live reliable actor telemetry from service fabric</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/18/publish-live-reliable-actor-telemetry-from-service-fabric-1453119939817/</id>
     <published>2016-01-18T12:25:39.000Z</published>
-    <updated>2016-01-26T13:09:07.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>After you’ve got your service fabric application live, you might see performance issues which you didn’t pick up in testing or simulated load tests. This could be for a number of reasons.</p>
 <ul>
 <li>Unexpected actor bottleneck, they are <a href="https://azure.microsoft.com/en-gb/documentation/articles/service-fabric-reliable-actors-introduction/#concurrency" target="_blank" rel="external">single threaded</a>.</li>
@@ -85,11 +334,11 @@
 <li>Fabric client initialisation to trace client interface calls <em>IActorInterface.YourDoWorkMethodAsync</em>.</li>
 </ul>
 <p>We can trace the former by using service fabrics dependency injection support to initialise the actors with a proxy inbetween. First we override fabrics initialisation to use our DI container which has dynamic proxy support.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">fabricRuntime.RegisterActorFactory(() =&gt; </span><br><span class="line">    ServiceLocator.Current.GetInstance&lt;YourActor&gt;());</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line">fabricRuntime.RegisterActorFactory(() =&gt; </div><div class="line">    ServiceLocator.Current.GetInstance&lt;YourActor&gt;());</div></pre></td></tr></table></figure>
 <p>Next we tell our DI container to resolve these types with a proxy that includes our telemetry interceptor.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">serviceRegistry.Intercept(registration =&gt; </span><br><span class="line">    <span class="keyword">typeof</span>(IActor).IsAssignableFrom(registration.ServiceType),</span><br><span class="line">    (factory, definition) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        definition.Implement(factory.GetInstance&lt;ActorInterceptor&gt;);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line">serviceRegistry.Intercept(registration =&gt; </div><div class="line">    <span class="keyword">typeof</span>(IActor).IsAssignableFrom(registration.ServiceType),</div><div class="line">    (factory, definition) =&gt;</div><div class="line">    &#123;</div><div class="line">        definition.Implement(factory.GetInstance&lt;ActorInterceptor&gt;);</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
 <p>This will catch the timings for any calls to actors made by the fabric system. Now we need to get the timings for all the calls we make, both <em>actor to actor</em> and <em>client to actor</em>.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorFactory</span> : <span class="title">IActorFactory</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">readonly</span> ActorInterceptor _actorInterceptor;</span><br><span class="line">    <span class="keyword">readonly</span> ConcurrentDictionary&lt;Type, Type&gt; _proxies = </span><br><span class="line">        <span class="keyword">new</span> ConcurrentDictionary&lt;Type, Type&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActorFactory</span>(<span class="params">ActorInterceptor actorInterceptor</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        _actorInterceptor = actorInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> T Get&lt;T&gt;(ActorId actorId) <span class="keyword">where</span> T : IActor</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> proxyType = _proxies.GetOrAdd(<span class="keyword">typeof</span>(T), type =&gt;</span><br><span class="line">            <span class="keyword">new</span> ProxyBuilder().GetProxyType(</span><br><span class="line">                <span class="keyword">new</span> ProxyDefinition(<span class="keyword">typeof</span>(T), <span class="keyword">true</span>).Implement(</span><br><span class="line">                    () =&gt; _actorInterceptor)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (T)Activator.CreateInstance(proxyType, </span><br><span class="line">            <span class="keyword">new</span> Lazy&lt;T&gt;(() =&gt; ActorProxy.Create&lt;T&gt;(actorId)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorFactory</span> : <span class="title">IActorFactory</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">readonly</span> ActorInterceptor _actorInterceptor;</div><div class="line">    <span class="keyword">readonly</span> ConcurrentDictionary&lt;Type, Type&gt; _proxies = </div><div class="line">        <span class="keyword">new</span> ConcurrentDictionary&lt;Type, Type&gt;();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ActorFactory</span>(<span class="params">ActorInterceptor actorInterceptor</span>)</span></div><div class="line">    &#123;</div><div class="line">        _actorInterceptor = actorInterceptor;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> T Get&lt;T&gt;(ActorId actorId) <span class="keyword">where</span> T : IActor</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">var</span> proxyType = _proxies.GetOrAdd(<span class="keyword">typeof</span>(T), type =&gt;</div><div class="line">            <span class="keyword">new</span> ProxyBuilder().GetProxyType(</div><div class="line">                <span class="keyword">new</span> ProxyDefinition(<span class="keyword">typeof</span>(T), <span class="literal">true</span>).Implement(</div><div class="line">                    () =&gt; _actorInterceptor)));</div><div class="line"></div><div class="line">        <span class="keyword">return</span> (T)Activator.CreateInstance(proxyType, </div><div class="line">            <span class="keyword">new</span> Lazy&lt;T&gt;(() =&gt; ActorProxy.Create&lt;T&gt;(actorId)));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>Above we’ve created a factory class which should be used by clients and actors to create the proxied ActorProxies. We cache the generated proxy types in a thread safe dictionary as they are <a href="http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/">expensive to create</a>.</p>
 <p>Lastly we need the intercetor itself. We need to be sympathetic towards:</p>
 <ul>
@@ -97,34 +346,38 @@
 <li>Avoid blocking calls by calling <code>Result</code> or <code>Wait</code> on the task.</li>
 </ul>
 <p>We can use a task continuation to handle the writing of telemetry together with a closure to capture the timer. If there is a return value we should return it, and for whatever reason that value is not a Task then we won’t try to add the continuation.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorInterceptor</span> : <span class="title">IInterceptor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">Invoke</span>(<span class="params">IInvocationInfo invocationInfo</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> name = <span class="keyword">string</span>.Format(<span class="string">"Actors.&#123;0&#125;.&#123;1&#125;"</span>,</span><br><span class="line">            invocationInfo.Proxy.Target.GetType().Name,</span><br><span class="line">            invocationInfo.Method.Name);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> timer = Metrics.StartTimer(name);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> returnValue = invocationInfo.Proceed();</span><br><span class="line"></span><br><span class="line">        (returnValue <span class="keyword">as</span> Task)?.ContinueWith(task =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">           timer.Dispose();</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> returnValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ActorInterceptor</span> : <span class="title">IInterceptor</span></div><div class="line">&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">Invoke</span>(<span class="params">IInvocationInfo invocationInfo</span>)</span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">var</span> name = <span class="keyword">string</span>.Format(<span class="string">"Actors.&#123;0&#125;.&#123;1&#125;"</span>,</div><div class="line">            invocationInfo.Proxy.Target.GetType().Name,</div><div class="line">            invocationInfo.Method.Name);</div><div class="line"></div><div class="line">        <span class="keyword">var</span> timer = Metrics.StartTimer(name);</div><div class="line"></div><div class="line">        <span class="keyword">var</span> returnValue = invocationInfo.Proceed();</div><div class="line"></div><div class="line">        (returnValue <span class="keyword">as</span> Task)?.ContinueWith(task =&gt;</div><div class="line">        &#123;</div><div class="line">           timer.Dispose();</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> returnValue;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>If you have your metrics library configured to push to a graphite backend you can use the following query to graph it:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">stats.timers.actors.*.*.mean&#10;stats.timers.actors.*.*.count</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">stats.timers.actors.*.*.mean</div><div class="line">stats.timers.actors.*.*.count</div></pre></td></tr></table></figure>
 <p><img src="/blog/images/actor-telemetry.png" alt="actor telemetry"></p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[After you've got your service fabric application live, you might see performance issues which you didn't pick up in testing or simulated load tests.]]>
+    
+      After you&#39;ve got your service fabric application live, you might see performance issues which you didn&#39;t pick up in testing or simulated load tests.
     
     </summary>
     
-      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
-      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
       <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
-      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[A look at performance on .NET dynamic proxies]]></title>
+    <title>A look at performance on .NET dynamic proxies</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/18/a-look-at-performance-on-dotnet-dynamic-proxies-1448894394346/</id>
     <published>2016-01-18T09:00:00.000Z</published>
-    <updated>2016-01-26T13:07:19.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>I currently use <a href="http://www.lightinject.net/" target="_blank" rel="external">LightInject</a> for dependency injection primarily for its good performance and well documented features. I needed to proxy our service fabric actors to trace call timings and I wanted to see if their <a href="http://www.lightinject.net/#interception" target="_blank" rel="external">interception</a> package was competitive with other open source offerings.</p>
 <p>We’ll take a look at:</p>
 <ul>
@@ -132,7 +385,7 @@
 <li><a href="http://www.lightinject.net/#interception" target="_blank" rel="external">LightInject Interceptor</a> - I hadn’t heard of this one until I started using LightInject.</li>
 <li><a href="https://github.com/mtamme/NProxy" target="_blank" rel="external">NProxy</a> - Also a new one to me, but I’ve added it since it is easy to use.</li>
 </ul>
-<h3 id="Creating_proxy_instances">Creating proxy instances</h3><chart type="BarChart" options="{'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
+<h3 id="Creating-proxy-instances"><a href="#Creating-proxy-instances" class="headerlink" title="Creating proxy instances"></a>Creating proxy instances</h3><chart type="BarChart" options="{'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
 
 <table>
 <thead>
@@ -216,7 +469,7 @@
 </tbody>
 </table>
 <p>Things are much closer now! The difference between Castle and LightInject are negligible. There might be a way to optimise NProxy further but the API didn’t yield any obvious optimisations.</p>
-<h3 id="Calling_proxied_methods">Calling proxied methods</h3><p>Now let’s take a look at the runtime overhead of calling a proxied object. I’ve included an unproxied instance as a baseline.</p>
+<h3 id="Calling-proxied-methods"><a href="#Calling-proxied-methods" class="headerlink" title="Calling proxied methods"></a>Calling proxied methods</h3><p>Now let’s take a look at the runtime overhead of calling a proxied object. I’ve included an unproxied instance as a baseline.</p>
 <chart type="BarChart" options="{'hAxis':{'baseline':0}, 'legend':{'position':'bottom'}, 'height':'300'}"><br>  <div></div><br></chart>
 
 <table>
@@ -248,79 +501,87 @@
 <p>Surprisingly there is no overhead with any of the libraries with calling the proxied object. The graph looks skewed due to how close the results are and the timings are in nanoseconds. This is great news and we can use whichever library we want guilt-free. </p>
 <p>You can review the code for the benchmarks on <a href="https://github.com/naeemkhedarun/Benchmarks/blob/master/Benchmarking/DynamicProxyBenchmark.cs" target="_blank" rel="external">github</a>.</p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[I needed to proxy our service fabric actors to trace call timings and I wanted to see if their interception package was competitive with other open source offerings.]]>
+    
+      I needed to proxy our service fabric actors to trace call timings and I wanted to see if their interception package was competitive with other open source offerings.
     
     </summary>
     
-      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
-    
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
+    
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Getting the number of service fabric partitions]]></title>
+    <title>Getting the number of service fabric partitions</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/14/Getting-the-number-of-service-fabric-partitions-1452789246119/</id>
     <published>2016-01-14T16:34:19.000Z</published>
-    <updated>2016-01-26T13:08:29.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fabricClient = <span class="keyword">new</span> FabricClient();</span><br><span class="line"><span class="keyword">var</span> partitions = <span class="keyword">await</span> fabricClient.QueryManager.GetPartitionListAsync(</span><br><span class="line">    <span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> partition = partitions[<span class="number">0</span>] <span class="comment">//Select the first partition;</span></span><br><span class="line"><span class="keyword">var</span> partitionLowKey = ((Int64RangePartitionInformation)partition.PartitionInformation).LowKey;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> fabricClient = <span class="keyword">new</span> FabricClient();</div><div class="line"><span class="keyword">var</span> partitions = <span class="keyword">await</span> fabricClient.QueryManager.GetPartitionListAsync(</div><div class="line">    <span class="keyword">new</span> Uri(<span class="string">$"fabric:/App/<span class="subst">&#123;serviceName&#125;</span>"</span>));</div><div class="line"></div><div class="line"><span class="keyword">var</span> partition = partitions[<span class="number">0</span>] <span class="comment">//Select the first partition;</span></div><div class="line"><span class="keyword">var</span> partitionLowKey = ((Int64RangePartitionInformation)partition.PartitionInformation).LowKey;</div></pre></td></tr></table></figure>
 <p>The result of <code>GetPartitionListAsync</code> should never change for a service as you can’t change the partition information after a service has been created. It would be safe and give better performance to cache this. </p>
 <p>The endpoint of the primary replica however can move between machines, so this does need to be resolved more frequently. You can also cache this if you have a retry strategy that will re-resolve after an <code>EndpointNotFoundException</code>.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> resolver = <span class="keyword">new</span> ServicePartitionResolver(() =&gt; fabricClient);</span><br><span class="line"><span class="keyword">var</span> resolvedPartition = <span class="keyword">await</span> resolver.ResolveAsync(<span class="keyword">new</span> Uri($<span class="string">"fabric:/App/&#123;serviceName&#125;"</span>), partitionLowKey, CancellationToken.None);</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> resolver = <span class="keyword">new</span> ServicePartitionResolver(() =&gt; fabricClient);</div><div class="line"><span class="keyword">var</span> resolvedPartition = <span class="keyword">await</span> resolver.ResolveAsync(<span class="keyword">new</span> Uri(<span class="string">$"fabric:/App/<span class="subst">&#123;serviceName&#125;</span>"</span>), partitionLowKey, CancellationToken.None);</div></pre></td></tr></table></figure>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.]]>
+    
+      You might need to programmatically lookup details about a service. The FabricClient class can be used to lookup various things from the cluster.
     
     </summary>
     
-      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
-      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
       <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
-      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Sharding data across service fabric partitions]]></title>
+    <title>Sharding data across service fabric partitions</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/14/sharding-data-across-service-fabric-partitions-1452597860697/</id>
     <published>2016-01-14T14:58:24.000Z</published>
-    <updated>2016-01-26T13:09:24.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service. We’ll ignore the singleton partitions as they won’t help us with sharding.</p>
 <ul>
 <li><strong>Named Partition</strong> - This is a fixed name for each partition configured at deploy time.</li>
 <li><strong>Ranged Partition</strong> - This uses an <code>Int64</code> range to decide which partition a numbered key falls in.</li>
 </ul>
 <p>More information can be found <a href="https://azure.microsoft.com/en-gb/documentation/articles/service-fabric-concepts-partitioning/" target="_blank" rel="external">here</a>.</p>
-<h3 id="Named_Partitioning">Named Partitioning</h3><p>A named partition allows you to specify explicitly which partition you want to access at runtime. A common example is to specify A-Z named partitions and use the first letter of your data as the key. This splits your data into 26 partitions. </p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">Service</span> <span class="attribute">Name</span>=<span class="value">"TestService"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">StatefulService</span> <span class="attribute">ServiceTypeName</span>=<span class="value">"TestServiceType"</span> </span><br><span class="line">                   <span class="attribute">TargetReplicaSetSize</span>=<span class="value">"3"</span> </span><br><span class="line">                   <span class="attribute">MinReplicaSetSize</span>=<span class="value">"2"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">NamedPartition</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">Partition</span> <span class="attribute">Name</span>=<span class="value">"a"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="title">Partition</span> <span class="attribute">Name</span>=<span class="value">"b"</span>/&gt;</span></span><br><span class="line">      ...</span><br><span class="line">      <span class="tag">&lt;<span class="title">Partition</span> <span class="attribute">Name</span>=<span class="value">"z"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">NamedPartition</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">StatefulService</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">Service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Named-Partitioning"><a href="#Named-Partitioning" class="headerlink" title="Named Partitioning"></a>Named Partitioning</h3><p>A named partition allows you to specify explicitly which partition you want to access at runtime. A common example is to specify A-Z named partitions and use the first letter of your data as the key. This splits your data into 26 partitions. </p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Service</span> <span class="attr">Name</span>=<span class="string">"TestService"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">StatefulService</span> <span class="attr">ServiceTypeName</span>=<span class="string">"TestServiceType"</span> </span></div><div class="line">                   <span class="attr">TargetReplicaSetSize</span>=<span class="string">"3"</span> </div><div class="line">                   <span class="attr">MinReplicaSetSize</span>=<span class="string">"2"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">NamedPartition</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">Partition</span> <span class="attr">Name</span>=<span class="string">"a"</span>/&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">Partition</span> <span class="attr">Name</span>=<span class="string">"b"</span>/&gt;</span></div><div class="line">      ...</div><div class="line">      <span class="tag">&lt;<span class="name">Partition</span> <span class="attr">Name</span>=<span class="string">"z"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">NamedPartition</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">StatefulService</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">Service</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>The advantages to this are that it is simple and you know which partition your data goes in without a lookup. Unfortunately as we will test later, you are unlikely to get a good distribution of your data across the partitions.</p>
-<h3 id="Ranged_Partitioning">Ranged Partitioning</h3><p>With a ranged partition the fabric tooling by default uses the entire <code>Int64</code> range as keys to decide which partition. It will then convert these into ranges or buckets depending on the partition count.</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">Service</span> <span class="attribute">Name</span>=<span class="value">"TestService"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">StatefulService</span> <span class="attribute">ServiceTypeName</span>=<span class="value">"TestServiceType"</span> </span><br><span class="line">                   <span class="attribute">TargetReplicaSetSize</span>=<span class="value">"3"</span> </span><br><span class="line">                   <span class="attribute">MinReplicaSetSize</span>=<span class="value">"2"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">UniformInt64Partition</span> <span class="attribute">PartitionCount</span>=<span class="value">"26"</span></span><br><span class="line">                           <span class="attribute">LowKey</span>=<span class="value">"-9223372036854775808"</span> </span><br><span class="line">                           <span class="attribute">HighKey</span>=<span class="value">"9223372036854775807"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">StatefulService</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">Service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Ranged-Partitioning"><a href="#Ranged-Partitioning" class="headerlink" title="Ranged Partitioning"></a>Ranged Partitioning</h3><p>With a ranged partition the fabric tooling by default uses the entire <code>Int64</code> range as keys to decide which partition. It will then convert these into ranges or buckets depending on the partition count.</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Service</span> <span class="attr">Name</span>=<span class="string">"TestService"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">StatefulService</span> <span class="attr">ServiceTypeName</span>=<span class="string">"TestServiceType"</span> </span></div><div class="line">                   <span class="attr">TargetReplicaSetSize</span>=<span class="string">"3"</span> </div><div class="line">                   <span class="attr">MinReplicaSetSize</span>=<span class="string">"2"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">UniformInt64Partition</span> <span class="attr">PartitionCount</span>=<span class="string">"26"</span></span></div><div class="line">                           <span class="attr">LowKey</span>=<span class="string">"-9223372036854775808"</span> </div><div class="line">                           <span class="attr">HighKey</span>=<span class="string">"9223372036854775807"</span> /&gt;</div><div class="line">  <span class="tag">&lt;/<span class="name">StatefulService</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">Service</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>However to be able to lookup a partition we need a function which can reduce our data to an integer value. To use the configuration above we can convert our strings into an <code>Int64</code>. </p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> md5 = MD5.Create();</span><br><span class="line"><span class="keyword">var</span> <span class="keyword">value</span> = md5.ComputeHash(Encoding.ASCII.GetBytes(<span class="keyword">value</span>));</span><br><span class="line"><span class="keyword">var</span> key = BitConverter.ToInt64(<span class="keyword">value</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> client = ServiceProxy.Create&lt;ITestService&gt;(</span><br><span class="line">                    key, </span><br><span class="line">                    <span class="keyword">new</span> Uri(<span class="string">"fabric:/App/TestService"</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> md5 = MD5.Create();</div><div class="line"><span class="keyword">var</span> <span class="keyword">value</span> = md5.ComputeHash(Encoding.ASCII.GetBytes(<span class="keyword">value</span>));</div><div class="line"><span class="keyword">var</span> key = BitConverter.ToInt64(<span class="keyword">value</span>, <span class="number">0</span>);</div><div class="line"></div><div class="line"><span class="keyword">var</span> client = ServiceProxy.Create&lt;ITestService&gt;(</div><div class="line">                    key, </div><div class="line">                    <span class="keyword">new</span> Uri(<span class="string">"fabric:/App/TestService"</span>))</div></pre></td></tr></table></figure>
 <ol>
 <li>Hash the value to a fixed length byte array.</li>
 <li>Convert the array to an <code>Int64</code>.</li>
 <li>Create the client with the calculated key to connect to the service on that partition.</li>
 </ol>
-<h3 id="Ranged_Partition_with_Consistent_Hashing">Ranged Partition with Consistent Hashing</h3><p>Rather than use the ranges, you can fix your keys and plug in your own hash algorithm to resolve the partition.</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">Service</span> <span class="attribute">Name</span>=<span class="value">"TestService"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">StatefulService</span> <span class="attribute">ServiceTypeName</span>=<span class="value">"TestServiceType"</span> </span><br><span class="line">                   <span class="attribute">TargetReplicaSetSize</span>=<span class="value">"3"</span> </span><br><span class="line">                   <span class="attribute">MinReplicaSetSize</span>=<span class="value">"2"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">UniformInt64Partition</span> <span class="attribute">PartitionCount</span>=<span class="value">"26"</span> </span><br><span class="line">                           <span class="attribute">LowKey</span>=<span class="value">"0"</span> </span><br><span class="line">                           <span class="attribute">HighKey</span>=<span class="value">"25"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">StatefulService</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">Service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Ranged-Partition-with-Consistent-Hashing"><a href="#Ranged-Partition-with-Consistent-Hashing" class="headerlink" title="Ranged Partition with Consistent Hashing"></a>Ranged Partition with Consistent Hashing</h3><p>Rather than use the ranges, you can fix your keys and plug in your own hash algorithm to resolve the partition.</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Service</span> <span class="attr">Name</span>=<span class="string">"TestService"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">StatefulService</span> <span class="attr">ServiceTypeName</span>=<span class="string">"TestServiceType"</span> </span></div><div class="line">                   <span class="attr">TargetReplicaSetSize</span>=<span class="string">"3"</span> </div><div class="line">                   <span class="attr">MinReplicaSetSize</span>=<span class="string">"2"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">UniformInt64Partition</span> <span class="attr">PartitionCount</span>=<span class="string">"26"</span> </span></div><div class="line">                           <span class="attr">LowKey</span>=<span class="string">"0"</span> </div><div class="line">                           <span class="attr">HighKey</span>=<span class="string">"25"</span> /&gt;</div><div class="line">  <span class="tag">&lt;/<span class="name">StatefulService</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">Service</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>We now have a key range limited to 0-25 rather than the entire <code>Int64</code> range. We can resolve a client connected to this partition in the same way, however this time we need to compute a key that fits in this smaller range. I’m using the jump consistent hash implementation in <a href="https://github.com/turowicz/Hydra" target="_blank" rel="external">hydra</a>.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> shard = <span class="keyword">new</span> JumpSharding().GetShard(<span class="keyword">value</span>, <span class="number">26</span>);</span><br><span class="line"><span class="keyword">var</span> client = ServiceProxy.Create&lt;ITestService&gt;(</span><br><span class="line">                    shard, </span><br><span class="line">                    <span class="keyword">new</span> Uri(<span class="string">"fabric:/App/TestService"</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> shard = <span class="keyword">new</span> JumpSharding().GetShard(<span class="keyword">value</span>, <span class="number">26</span>);</div><div class="line"><span class="keyword">var</span> client = ServiceProxy.Create&lt;ITestService&gt;(</div><div class="line">                    shard, </div><div class="line">                    <span class="keyword">new</span> Uri(<span class="string">"fabric:/App/TestService"</span>))</div></pre></td></tr></table></figure>
 <ol>
 <li>Call get shard with the value and number of partitions to distribute across.</li>
 <li>Create the client with the calculated key to connect to the service on that partition.</li>
 </ol>
-<h3 id="Distribution">Distribution</h3><p>To benchmark the distribution we have a list of around 17000 real email addresses. This should give us an idea of how the sharding strategies will distribute the data across 26 partitions. Another advantage of using one of the <code>Int64</code> methods is that they can be used with any amount of partitions.</p>
+<h3 id="Distribution"><a href="#Distribution" class="headerlink" title="Distribution"></a>Distribution</h3><p>To benchmark the distribution we have a list of around 17000 real email addresses. This should give us an idea of how the sharding strategies will distribute the data across 26 partitions. Another advantage of using one of the <code>Int64</code> methods is that they can be used with any amount of partitions.</p>
 <p>We are looking for an even number of accounts allocated to each partition.</p>
 <chart type="BarChart" options="{'title':'Email accounts distribution comparison','vAxis':{'title':'Partitions'},'legend':{'position':'bottom'}, 'height':'750'}"><br>  <div></div><br></chart>
 
@@ -493,31 +754,35 @@
 </tbody>
 </table>
 <p>We can see from those results that sharding using the first character of an email produces wildly different partition sizes, not what we want! Both the jump hash and integer ranging methods produced very even parition sizes.</p>
-<h3 id="Conclusion">Conclusion</h3><p>Based on these results I would use the ranged partitioning method, it produces provides good balancing and is fast to compute. An additional advantage is you do not need to know the partition count in the code, just map your data to an <code>Int64</code> and service fabric will do the rest. </p>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>Based on these results I would use the ranged partitioning method, it produces provides good balancing and is fast to compute. An additional advantage is you do not need to know the partition count in the code, just map your data to an <code>Int64</code> and service fabric will do the rest. </p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service.]]>
+    
+      Service fabric gives you two mechanisms out of the box when resolving which partition you hit when calling a Reliable Service.
     
     </summary>
     
-      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
-      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
       <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
+      <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
+    
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
-      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+      <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Logging all unhandled exceptions in .NET]]></title>
+    <title>Logging all unhandled exceptions in .NET</title>
     <link href="http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/"/>
     <id>http://naeem.khedarun.co.uk/blog/2016/01/05/logging-all-unhandled-exceptions-in-dotnet-1452008814097/</id>
     <published>2016-01-05T15:46:54.000Z</published>
-    <updated>2016-01-26T13:08:49.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>With most applications its easy to get started on logging.</p>
 <ul>
 <li>Install a logging framework like NLog or log4net.</li>
@@ -526,34 +791,38 @@
 </ul>
 <p>However this will not log unhandled exceptions from places you couldn’t forsee. So let’s log these just in case anything goes wrong.</p>
 <p>Any exceptions which crash the application can be handled using the <code>UnhandledException</code> event.</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">AppDomain.CurrentDomain.UnhandledException += (sender, args) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    Log.Exception((Exception)args.ExceptionObject);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line">AppDomain.CurrentDomain.UnhandledException += (sender, args) =&gt;</div><div class="line">&#123;</div><div class="line">    Log.Exception((Exception)args.ExceptionObject);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>This will help you diagnose fatal errors. Unfortunately not all exceptions are fatal, and if you have any timers, unawaited async or unhandled task pool exceptions these can cause your application to behave unexpectedly without you knowing about it.</p>
 <p>You can use the UnobservedTaskException to catch some of those ones:</p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">TaskScheduler.UnobservedTaskException += (sender, args) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!args.Observed)</span><br><span class="line">    &#123;</span><br><span class="line">        Log.Exception(args.Exception);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line">TaskScheduler.UnobservedTaskException += (sender, args) =&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (!args.Observed)</div><div class="line">    &#123;</div><div class="line">        Log.Exception(args.Exception);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>If you know any other events or ways to get more of these unexpected errors please let me know!</p>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[With most applications its easy to get started on logging. However this will not log unhandled exceptions from places you couldn't forsee. So let's log these just in case anything goes wrong.]]>
+    
+      With most applications its easy to get started on logging. However this will not log unhandled exceptions from places you couldn&#39;t forsee. So let&#39;s log these just in case anything goes wrong.
     
     </summary>
+    
+      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
+    
     
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
     
-      <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
-    
   </entry>
   
   <entry>
-    <title><![CDATA[Attaching and formatting drives with Azure ARM and PowerShell]]></title>
+    <title>Attaching and formatting drives with Azure ARM and PowerShell</title>
     <link href="http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/"/>
     <id>http://naeem.khedarun.co.uk/blog/2015/12/03/attaching-and-formatting-drives-with-azure-arm-and-powershell/</id>
     <published>2015-12-03T12:02:16.000Z</published>
-    <updated>2016-01-26T13:07:49.000Z</updated>
+    <updated>2016-10-10T21:19:36.000Z</updated>
+    
     <content type="html"><![CDATA[<p>Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working. This is based on the <a href="https://github.com/Azure/azure-quickstart-templates/tree/master/windows-vm-custom-script" target="_blank" rel="external">custom script quickstart template</a> and <a href="http://blogs.technet.com/b/heyscriptingguy/archive/2013/05/29/use-powershell-to-initialize-raw-disks-and-partition-and-format-volumes.aspx" target="_blank" rel="external">Ed Wilsons formatting script article</a></p>
-<h3 id="Attach_a_disk">Attach a disk</h3><p>To attach a data disk to the virtual machine you can use the following configuration just below the osDisk definition.</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      "<span class="attribute">dataDisks</span>":<span class="value">[&#123;</span><br><span class="line">            "<span class="attribute">lun</span>":<span class="value"><span class="number">0</span></span>,</span><br><span class="line">            "<span class="attribute">name</span>":<span class="value"><span class="string">"datadisk"</span></span>,</span><br><span class="line">            "<span class="attribute">diskSizeGB</span>":<span class="value"><span class="number">1000</span></span>,</span><br><span class="line">            "<span class="attribute">createOption</span>":<span class="value"><span class="string">"Empty"</span></span>,</span><br><span class="line">            "<span class="attribute">vhd</span>":<span class="value">&#123;</span><br><span class="line">                  "<span class="attribute">Uri</span>":<span class="value"><span class="string">"[variables('dataDiskUri')]"</span></span><br><span class="line">            </span>&#125;</span><br><span class="line">      </span>&#125;]</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Attach-a-disk"><a href="#Attach-a-disk" class="headerlink" title="Attach a disk"></a>Attach a disk</h3><p>To attach a data disk to the virtual machine you can use the following configuration just below the osDisk definition.</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">      <span class="attr">"dataDisks"</span>:[&#123;</div><div class="line">            <span class="attr">"lun"</span>:<span class="number">0</span>,</div><div class="line">            <span class="attr">"name"</span>:<span class="string">"datadisk"</span>,</div><div class="line">            <span class="attr">"diskSizeGB"</span>:<span class="number">1000</span>,</div><div class="line">            <span class="attr">"createOption"</span>:<span class="string">"Empty"</span>,</div><div class="line">            <span class="attr">"vhd"</span>:&#123;</div><div class="line">                  <span class="attr">"Uri"</span>:<span class="string">"[variables('dataDiskUri')]"</span></div><div class="line">            &#125;</div><div class="line">      &#125;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
 <li>lun (Logical Unit Number) should be unique for each attached disk and starts from zero.</li>
 <li>diskSizeGB has a maximum of 1000 (1 TB) in Azure currently.</li>
@@ -561,27 +830,30 @@
 <li>vhd.Uri is the full path you want the blob created in.</li>
 </ul>
 <p>If we deployed the template with this now, we will get a raw unformatted disk with no drive label. You can view it in Disk Manager or by running the following PowerShell on the box.</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Get-Disk | Where partitionstyle <span class="operator">-eq</span> <span class="string">'raw'</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><div class="line">Get-Disk | Where partitionstyle <span class="nomarkup">-eq</span> <span class="string">'raw'</span></div></pre></td></tr></table></figure>
 <p>We need one more resource to complete the deployment and give us a formatted disk. We can use the CustomScriptExtension to run a PowerShell script which will format any raw attached disks (in case you want to do multiple drives).</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   "<span class="attribute">type</span>":<span class="value"><span class="string">"Microsoft.Compute/virtualMachines/extensions"</span></span>,</span><br><span class="line">   "<span class="attribute">name</span>":<span class="value"><span class="string">"[concat(variables('vmName'),'/InitialiseDisks')]"</span></span>,</span><br><span class="line">   "<span class="attribute">apiVersion</span>":<span class="value"><span class="string">"2015-05-01-preview"</span></span>,</span><br><span class="line">   "<span class="attribute">location</span>":<span class="value"><span class="string">"[resourceGroup().location]"</span></span>,</span><br><span class="line">   "<span class="attribute">dependsOn</span>":<span class="value">[</span><br><span class="line">      <span class="string">"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"</span></span><br><span class="line">   ]</span>,</span><br><span class="line">   "<span class="attribute">properties</span>":<span class="value">&#123;</span><br><span class="line">      "<span class="attribute">publisher</span>":<span class="value"><span class="string">"Microsoft.Compute"</span></span>,</span><br><span class="line">      "<span class="attribute">type</span>":<span class="value"><span class="string">"CustomScriptExtension"</span></span>,</span><br><span class="line">      "<span class="attribute">typeHandlerVersion</span>":<span class="value"><span class="string">"1.2"</span></span>,</span><br><span class="line">      "<span class="attribute">settings</span>":<span class="value">&#123;</span><br><span class="line">         "<span class="attribute">fileUris</span>":<span class="value">[</span><br><span class="line">            <span class="string">"[variables('initialiseDisksScript')]"</span></span><br><span class="line">         ]</span>,</span><br><span class="line">         "<span class="attribute">commandToExecute</span>":<span class="value"><span class="string">"[concat('powershell -ExecutionPolicy Unrestricted -file ',parameters('scriptName'))]"</span></span><br><span class="line">      </span>&#125;</span><br><span class="line">   </span>&#125;</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">   <span class="attr">"type"</span>:<span class="string">"Microsoft.Compute/virtualMachines/extensions"</span>,</div><div class="line">   <span class="attr">"name"</span>:<span class="string">"[concat(variables('vmName'),'/InitialiseDisks')]"</span>,</div><div class="line">   <span class="attr">"apiVersion"</span>:<span class="string">"2015-05-01-preview"</span>,</div><div class="line">   <span class="attr">"location"</span>:<span class="string">"[resourceGroup().location]"</span>,</div><div class="line">   <span class="attr">"dependsOn"</span>:[</div><div class="line">      <span class="string">"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"</span></div><div class="line">   ],</div><div class="line">   <span class="attr">"properties"</span>:&#123;</div><div class="line">      <span class="attr">"publisher"</span>:<span class="string">"Microsoft.Compute"</span>,</div><div class="line">      <span class="attr">"type"</span>:<span class="string">"CustomScriptExtension"</span>,</div><div class="line">      <span class="attr">"typeHandlerVersion"</span>:<span class="string">"1.2"</span>,</div><div class="line">      <span class="attr">"settings"</span>:&#123;</div><div class="line">         <span class="attr">"fileUris"</span>:[</div><div class="line">            <span class="string">"[variables('initialiseDisksScript')]"</span></div><div class="line">         ],</div><div class="line">         <span class="attr">"commandToExecute"</span>:<span class="string">"[concat('powershell -ExecutionPolicy Unrestricted -file ',parameters('scriptName'))]"</span></div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
 <li>dependsOn will need to be the resource path for our virtual machine to ensure this extension is run after its provisioned.</li>
 <li>fileUris is an array of any files we want downloaded and made available to execute. <strong>This needs to be a path to an azure blob</strong>, unfortunately you cannot link to any other domains like github.</li>
 <li>commandToExecute is a cmd.exe command, so we need to call out to powershell to invoke our script. The working directory will have your downloaded file already there, so you don’t need the full path to execute it, just the name.</li>
 </ul>
 <p>You will need to upload the following script to a blob:</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Get-Disk | ` </span><br><span class="line">Where partitionstyle <span class="operator">-eq</span> <span class="string">'raw'</span> | ` </span><br><span class="line">Initialize-Disk -PartitionStyle MBR -PassThru | ` </span><br><span class="line">New-Partition -AssignDriveLetter -UseMaximumSize | ` </span><br><span class="line">Format-Volume -FileSystem NTFS -NewFileSystemLabel <span class="string">"datadisk"</span> -Confirm:<span class="variable">$false</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><div class="line">Get-Disk | ` </div><div class="line">Where partitionstyle <span class="nomarkup">-eq</span> <span class="string">'raw'</span> | ` </div><div class="line">Initialize-Disk -PartitionStyle MBR -PassThru | ` </div><div class="line">New-Partition -AssignDriveLetter -UseMaximumSize | ` </div><div class="line">Format-Volume -FileSystem NTFS -NewFileSystemLabel <span class="string">"datadisk"</span> -Confirm:<span class="literal">$false</span></div></pre></td></tr></table></figure>
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working.]]>
+    
+      Setting up a virtual machine in Azure using ARM has been made straightforward, even with one-click deployments. If you have any services that need a bigger disk, there are a few more moving parts to get it working.
     
     </summary>
+    
+      <category term="operations" scheme="http://naeem.khedarun.co.uk/blog/categories/operations/"/>
+    
     
       <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="powershell" scheme="http://naeem.khedarun.co.uk/blog/tags/powershell/"/>
-    
-      <category term="operations" scheme="http://naeem.khedarun.co.uk/blog/categories/operations/"/>
     
   </entry>
   
