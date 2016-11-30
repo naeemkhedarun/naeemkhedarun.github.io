@@ -1,8 +1,8 @@
 title: HttpClient DNS settings for Azure Cloud Services and Traffic Manager
 tags:
-  - azure
   - .NET
   - 'C#'
+  - azure
 categories:
   - development
 date: 2016-11-30 12:00:10
