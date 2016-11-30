@@ -1,14 +1,14 @@
 title: HttpClient DNS settings for Azure Cloud Services and Traffic Manager
 tags:
   - .NET
-  - 'C#'
   - azure
+  - 'C#'
 categories:
   - development
 date: 2016-11-30 12:00:10
 ---
 
-At my current workplace, some of our systems are approaching 1 Billion requests per day. At these volumes sub-optimal configuration between systems can cause significant issues and subtle performance degradation. To understand some of the issues we are facing I'm going back to basics. 
+At my current workplace, some of our systems are approaching 1 Billion requests per day. At these volumes sub-optimal configuration between systems can cause significant issues and subtle performance degradation. To understand some of the issues we are facing I'm going back to basics. You can find the code for this post at [https://github.com/naeemkhedarun/TestHttpClient](https://github.com/naeemkhedarun/TestHttpClient).
 
 Thanks to [Aliostad](http://byterot.blogspot.co.uk/2016/07/singleton-httpclient-dns.html) for his analysis on the HttpClient and [fschwiet](https://github.com/fschwiet/PSHostsFile) for writing the .NET hosts library which I've now taken off my own to-do list.
 
