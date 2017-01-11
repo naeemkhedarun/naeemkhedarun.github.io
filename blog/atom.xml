@@ -5,7 +5,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2016-11-30T12:37:32.000Z</updated>
+  <updated>2017-01-11T12:28:57.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -14,6 +14,51 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>OctoSearch - Cache and search Octopus Deploy variable sets</title>
+    <link href="http://naeem.khedarun.co.uk/blog/2017/01/11/octosearch-cache-and-search-octopus-deploy-variable-sets-1484135933380/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2017/01/11/octosearch-cache-and-search-octopus-deploy-variable-sets-1484135933380/</id>
+    <published>2017-01-11T11:58:53.000Z</published>
+    <updated>2017-01-11T12:28:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>When putting together new deployments the <a href="https://octopus.com/" target="_blank" rel="external">octopus deploy</a> interface does a great job. Unfortunately, when you have hundreds of deployments and thousands of variables it can become difficult to find and navigate the variables without search and filter functions.</p>
+<p>As a stop-gap to Octopus hopefully adding this feature I’ve created <a href="https://github.com/naeemkhedarun/OctoSearch" target="_blank" rel="external">OctoSearch</a>. This allows you to download and cache the variable sets with their variable collections locally as Text, Json or Html.</p>
+<p>OctoSearch itself is a package available from nuget. It has been compiled down to a native executable so a dotnet core installation is not needed.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; nuget install OctoSearch</div><div class="line">&gt; cd .\tools\OctoSearch*\tools</div><div class="line">&gt; .\OctoSearch.exe</div></pre></td></tr></table></figure>
+<p>The first step is to login with the octopus server so we can create, download and cache an API token. This will be used for subsequent calls to octopus.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe login -l https://octopus/ -u username</div><div class="line">Please enter your password...</div><div class="line">*********</div><div class="line">Successfully logged in.</div></pre></td></tr></table></figure>
+<p>Now that we’re authenticated we can download and cache the variable sets and their variable collections. This cache will be used for our searches to reduce the load on the Octopus server. Variables marked as sensitive won’t have their values downloaded or cached; their variable names will be searchable but not their values.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe cache</div><div class="line">Saved LibraryVariableSet1.</div><div class="line">Saved LibraryVariableSet2.</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>With the variables cached locally you can run fast searches and regenerate them into either Json or Html documents. To run a basic command line search you can use the search verb. It takes a regex so you can pass in basic text or more advanced text searches when you need to.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe search --regex connectionstring</div><div class="line">Database.ConnectionString            ConnectionStringOne</div><div class="line">ServiceBus.ConnectionString          ConnectionStringTwo</div></pre></td></tr></table></figure>
+<p>To output the search results into a text file you can do:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe search --regex connectionstring --output-file results.txt</div></pre></td></tr></table></figure>
+<p>To display all the variables in a html report we omit the regex to default to a greedy regex \w.. The html report has a client side search facility to filter variables for easier exploration.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe search --output-file results.html --output-format html</div></pre></td></tr></table></figure>
+<p>This will give you a search UI that looks like:</p>
+<p><img src="https://github.com/naeemkhedarun/OctoSearch/raw/master/wiki/images/html-report.png" alt="search report"></p>
+<p>If you would prefer it in Json:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; .\OctoSearch.exe search  --output-file results.json --output-format json</div></pre></td></tr></table></figure>
+<p>Once we have it in Json we can load and analyse it within powershell. For example to get all the variables marked as <code>IsSensitive</code> we could do:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&gt; $variablesets = ConvertFrom-Json (gc -Raw .\results.json)</div><div class="line">&gt; ($variablesets | % &#123; $_.Variables &#125; | ? &#123; $_.IsSensitive &#125;).length</div><div class="line">300</div></pre></td></tr></table></figure>
+<p>If you have any feedback or feature requests you can <a href="https://github.com/naeemkhedarun/OctoSearch/issues" target="_blank" rel="external">create an issue</a> or reach me <a href="https://twitter.com/NaeemKhedarun" target="_blank" rel="external">@naeemkhedarun</a>.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;When putting together new deployments the &lt;a href=&quot;https://octopus.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;octopus deploy&lt;/a&gt; interface does
+    
+    </summary>
+    
+      <category term="operations" scheme="http://naeem.khedarun.co.uk/blog/categories/operations/"/>
+    
+    
+      <category term="powershell" scheme="http://naeem.khedarun.co.uk/blog/tags/powershell/"/>
+    
+      <category term="octopus" scheme="http://naeem.khedarun.co.uk/blog/tags/octopus/"/>
+    
+  </entry>
   
   <entry>
     <title>HttpClient DNS settings for Azure Cloud Services and Traffic Manager</title>
@@ -81,11 +126,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
   </entry>
   
@@ -435,11 +480,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
@@ -612,11 +657,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
@@ -840,11 +885,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
