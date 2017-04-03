@@ -5,7 +5,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2017-04-03T13:54:19.000Z</updated>
+  <updated>2017-04-03T14:17:13.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-versions-up-to-date-1491218032473/"/>
     <id>http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-versions-up-to-date-1491218032473/</id>
     <published>2017-04-03T13:51:21.000Z</published>
-    <updated>2017-04-03T13:54:19.000Z</updated>
+    <updated>2017-04-03T14:17:13.000Z</updated>
     
     <content type="html"><![CDATA[<p>The package management features within Visual Studio are fantastic when working within a single solution. It lets you know when there are new packages available and you are referencing multiple versions of the same package. There are some scenarios which could be improved:</p>
 <ul>
@@ -28,20 +28,21 @@
 <li>Solutions composed of packages output by different repositories.</li>
 </ul>
 <p>Some of our applications have code distributed across different repositories and packages. Since these are different solutions its difficult to use existing tools to detect when these packages are getting out of sync. <a href="https://github.com/naeemkhedarun/NugetXray" target="_blank" rel="external">NugetXray</a> has commands to do just that.</p>
-<p>It’s available at <a href="nuget.org">https://www.nuget.org/packages/NugetXray/</a>.</p>
+<p>It’s available at <a href="https://www.nuget.org/packages/NugetXray/" target="_blank" rel="external">nuget.org</a>.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">nuget install NugetXray</div></pre></td></tr></table></figure>
 <p>There are currently two commands: one to find out of date packages and another to find package version mismatches.</p>
-<p>To generate a diff report:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe diff -d C:\git\source\</div><div class="line"></div><div class="line">Scanning https://www.nuget.org/api/v2 for packages.configs.</div><div class="line">WindowsAzure.Storage.2.1.0.4                                           | -5.0.0      | 3   configs</div><div class="line">Newtonsoft.Json.6.0.8                                                  | -3.0.0      | 4   configs</div><div class="line">WindowsAzure.Storage.4.3.0                                             | -3.0.0      | 1   configs</div></pre></td></tr></table></figure>
+<h3 id="Find-packages-with-newer-versions"><a href="#Find-packages-with-newer-versions" class="headerlink" title="Find packages with newer versions"></a>Find packages with newer versions</h3><p>To generate a diff report:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe diff -d C:\git\source\</div><div class="line"></div><div class="line">Scanning https://www.nuget.org/api/v2 for packages.configs.</div><div class="line">WindowsAzure.Storage.2.1.0.4                                | -5.0.0      | 3   configs</div><div class="line">Newtonsoft.Json.6.0.8                                             | -3.0.0      | 4   configs</div><div class="line">WindowsAzure.Storage.4.3.0                                   | -3.0.0      | 1   configs</div></pre></td></tr></table></figure>
 <p>This shows us how many major, minor or patch versions we are behind by. You can generate a report across multiple repositories by setting the directory parameter to the root of both repositories.</p>
 <p>You can also output either json or html if you want to build further tooling around it. The html report can included as a <a href="https://confluence.jetbrains.com/display/TCD8/Including+Third-Party+Reports+in+the+Build+Results" target="_blank" rel="external">third party teamcity report</a>.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe diff -d C:\git\source\ -f html -o diff.html</div></pre></td></tr></table></figure>
 <p><img src="/blog/images/nx-diff.png" alt=""> </p>
-<p>To find whether you have multiple versions of the same package, you can run the duplicate command.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe duplicate -d C:\git\ConveyorBelt\</div><div class="line"></div><div class="line">Scanning C:\git\ConveyorBelt\ for packages.configs.</div><div class="line">WindowsAzure.Storage                                                   | 2 versions</div><div class="line"></div><div class="line">Errors:   1</div></pre></td></tr></table></figure>
+<h3 id="Find-packages-which-need-consolidating"><a href="#Find-packages-which-need-consolidating" class="headerlink" title="Find packages which need consolidating"></a>Find packages which need consolidating</h3><p>To find whether you have multiple versions of the same package, you can run the duplicate command.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe duplicate -d C:\git\source\</div><div class="line"></div><div class="line">Scanning C:\git\ConveyorBelt\ for packages.configs.</div><div class="line">WindowsAzure.Storage                                                   | 2 versions</div><div class="line"></div><div class="line">Errors:   1</div></pre></td></tr></table></figure>
 <p>As before you can include multiple solutions under a single root directory to find duplicates across solutions. It also supports both Json and Html output.</p>
-<p>If you want to integrate it with your build process, and fail when there are packages which need updating or consolidating, you can use the exit code. If calling from PowerShell you can get by calling <code>$LASTEXITCODE</code>. A negative exit code is returned to indicate there are results.</p>
+<h3 id="Fail-the-build"><a href="#Fail-the-build" class="headerlink" title="Fail the build"></a>Fail the build</h3><p>If you want to integrate it with your build process, and fail when there are packages which need updating or consolidating, you can use the exit code. If calling from PowerShell you can get by calling <code>$LASTEXITCODE</code>. A negative exit code is returned to indicate there are results.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.\NugetXray.exe diff -d C:\git\source\</div><div class="line">$LASTEXITCODE</div><div class="line">-1</div></pre></td></tr></table></figure>
+<h3 id="Verbose-flag"><a href="#Verbose-flag" class="headerlink" title="Verbose flag"></a>Verbose flag</h3><p>If you want more details output around the failures and which packages.config they refer to you can specify the <code>verbose</code> flag. </p>
 <p>If you have any feedback or feature requests you can create an <a href="https://github.com/naeemkhedarun/NugetXray/issues" target="_blank" rel="external">issue</a> or reach me <a href="https://twitter.com/naeemkhedarun" target="_blank" rel="external">@naeemkhedarun</a>.</p>
 ]]></content>
     
