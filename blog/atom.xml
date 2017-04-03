@@ -5,7 +5,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="http://naeem.khedarun.co.uk/blog/"/>
-  <updated>2017-04-03T14:17:13.000Z</updated>
+  <updated>2017-04-03T14:19:48.000Z</updated>
   <id>http://naeem.khedarun.co.uk/blog/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>NugetXray - Be proactive in keeping your versions up to date</title>
-    <link href="http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-versions-up-to-date-1491218032473/"/>
-    <id>http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-versions-up-to-date-1491218032473/</id>
+    <title>NugetXray - Be proactive in keeping your packages up to date</title>
+    <link href="http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-packages-up-to-date-1491218032473/"/>
+    <id>http://naeem.khedarun.co.uk/blog/2017/04/03/nugetxray-be-proactive-in-keeping-your-packages-up-to-date-1491218032473/</id>
     <published>2017-04-03T13:51:21.000Z</published>
-    <updated>2017-04-03T14:17:13.000Z</updated>
+    <updated>2017-04-03T14:19:48.000Z</updated>
     
     <content type="html"><![CDATA[<p>The package management features within Visual Studio are fantastic when working within a single solution. It lets you know when there are new packages available and you are referencing multiple versions of the same package. There are some scenarios which could be improved:</p>
 <ul>
@@ -174,11 +174,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
   </entry>
   
@@ -528,11 +528,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
@@ -705,11 +705,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     
@@ -933,11 +933,11 @@
       <category term="development" scheme="http://naeem.khedarun.co.uk/blog/categories/development/"/>
     
     
+      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
+    
       <category term=".NET" scheme="http://naeem.khedarun.co.uk/blog/tags/NET/"/>
     
       <category term="C#" scheme="http://naeem.khedarun.co.uk/blog/tags/C/"/>
-    
-      <category term="azure" scheme="http://naeem.khedarun.co.uk/blog/tags/azure/"/>
     
       <category term="servicefabric" scheme="http://naeem.khedarun.co.uk/blog/tags/servicefabric/"/>
     

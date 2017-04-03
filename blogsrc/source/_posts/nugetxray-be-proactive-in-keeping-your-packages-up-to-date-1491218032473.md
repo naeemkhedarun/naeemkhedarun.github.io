@@ -1,7 +1,7 @@
-title: NugetXray - Be proactive in keeping your versions up to date
+title: NugetXray - Be proactive in keeping your packages up to date
 tags:
-  - 'C#'
   - powershell
+  - 'C#'
   - nuget
 categories:
   - development
